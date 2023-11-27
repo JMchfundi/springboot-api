@@ -48,7 +48,7 @@ public class ProjectController {
         if (service.existsByName(projectInfo.getProjectname()))
             return new ResponseEntity(HttpStatus.CONFLICT);
         else {
-            projectInfo.setProjectLocation(new ProjectLocation(null, null, null, projectInfo.getUser_signature()));
+            // projectInfo.setProjectLocation(new ProjectLocation(null, null, null, projectInfo.getUser_signature()));
             projectInfo.setProjectUpload(new ProjectUpload(null, null, null, projectInfo.getUser_signature()));
             service.save(projectInfo);
             return new ResponseEntity(projectInfo, HttpStatus.OK);
@@ -59,26 +59,26 @@ public class ProjectController {
      * .......................obr_post_service insert db
      * data.............................
      */
-    @RequestMapping(value = "/post_loc", method = RequestMethod.POST, consumes = {
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE })
-    public ResponseEntity<?> post_loc(@ModelAttribute ProjectLocationPayload locationPayload,
-            UriComponentsBuilder builder) {
-        ProjectLocation projectLocation = null;
-        ProjectInfo projectInfo = null;
-        if (service.existsByName(locationPayload.getProjectname())) {
-            projectLocation = locationRepoService
-                    .findById(service.findByName(locationPayload.getProjectname()).get(0).getProjectLocationID())
-                    .stream().collect(Collectors.toList()).get(0);
-            projectLocation.setMap_keyword(locationPayload.getKeyword());
-            projectLocation.setMap_location(locationPayload.getProjlocation());
-            projectInfo = service.findByName(locationPayload.getProjectname()).get(0);
-            projectInfo.setProjectLocation(projectLocation);
-            service.save(projectInfo);
-            return new ResponseEntity(HttpStatus.OK);
-        } else
-            return new ResponseEntity(locationPayload.getProjectname(), HttpStatus.BAD_REQUEST);
+    // @RequestMapping(value = "/post_loc", method = RequestMethod.POST, consumes = {
+    //         MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+    // public ResponseEntity<?> post_loc(@ModelAttribute ProjectLocationPayload locationPayload,
+    //         UriComponentsBuilder builder) {
+    //     ProjectLocation projectLocation = null;
+    //     ProjectInfo projectInfo = null;
+    //     if (service.existsByName(locationPayload.getProjectname())) {
+    //         projectLocation = locationRepoService
+    //                 .findById(service.findByName(locationPayload.getProjectname()).get(0).getProjectLocationID())
+    //                 .stream().collect(Collectors.toList()).get(0);
+    //         projectLocation.setMap_keyword(locationPayload.getKeyword());
+    //         projectLocation.setMap_location(locationPayload.getProjlocation());
+    //         projectInfo = service.findByName(locationPayload.getProjectname()).get(0);
+    //         projectInfo.setProjectLocation(projectLocation);
+    //         service.save(projectInfo);
+    //         return new ResponseEntity(HttpStatus.OK);
+    //     } else
+    //         return new ResponseEntity(locationPayload.getProjectname(), HttpStatus.BAD_REQUEST);
 
-    }
+    // }
 
     /*
      * .......................obr_put_file upload db

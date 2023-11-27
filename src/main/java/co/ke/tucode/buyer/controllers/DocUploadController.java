@@ -55,49 +55,6 @@ public class DocUploadController {
     private DocUploadRepository docUploadRepository;
 
     /*
-     * .......................obr_post_service insert db
-     * data.............................
-     */
-    @RequestMapping(value = "/post_info", method = RequestMethod.POST, consumes = {
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE })
-    public ResponseEntity<?> post_service(@ModelAttribute ProjectInfo projectInfo,
-            UriComponentsBuilder builder) {
-        if (service.existsByName(projectInfo.getProjectname()))
-            return new ResponseEntity(HttpStatus.CONFLICT);
-        else {
-            projectInfo.setProjectLocation(new ProjectLocation(null, null, null, projectInfo.getUser_signature()));
-            projectInfo.setProjectUpload(new ProjectUpload(null, null, null, projectInfo.getUser_signature()));
-            service.save(projectInfo);
-            return new ResponseEntity(projectInfo, HttpStatus.OK);
-        }
-    }
-
-    /*
-     * .......................obr_post_service insert db
-     * data.............................
-     */
-    @RequestMapping(value = "/post_loc", method = RequestMethod.POST, consumes = {
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE })
-    public ResponseEntity<?> post_loc(@ModelAttribute ProjectLocationPayload locationPayload,
-            UriComponentsBuilder builder) {
-        ProjectLocation projectLocation = null;
-        ProjectInfo projectInfo = null;
-        if (service.existsByName(locationPayload.getProjectname())) {
-            projectLocation = locationRepoService
-                    .findById(service.findByName(locationPayload.getProjectname()).get(0).getProjectLocationID())
-                    .stream().collect(Collectors.toList()).get(0);
-            projectLocation.setMap_keyword(locationPayload.getKeyword());
-            projectLocation.setMap_location(locationPayload.getProjlocation());
-            projectInfo = service.findByName(locationPayload.getProjectname()).get(0);
-            projectInfo.setProjectLocation(projectLocation);
-            service.save(projectInfo);
-            return new ResponseEntity(HttpStatus.OK);
-        } else
-            return new ResponseEntity(locationPayload.getProjectname(), HttpStatus.BAD_REQUEST);
-
-    }
-
-    /*
      * .......................obr_put_file upload db
      * data.............................
      */
@@ -117,11 +74,14 @@ public class DocUploadController {
                 // Files.copy(file.getInputStream(),
                 // Paths.get("uploads").resolve(filename+file.getOriginalFilename()));
                 if (FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("pdf")) {
-                    if (docUploadRepository.existsByName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()))) {
-                        upload = docUploadRepository.findByName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename())).get(0);
+                    if (docUploadRepository
+                            .existsByName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()))) {
+                        upload = docUploadRepository
+                                .findByName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()))
+                                .get(0);
                         upload.setFile(file.getBytes());
                         upload.setUser(user);
-                        docUploadRepository.save(upload);    
+                        docUploadRepository.save(upload);
                     } else {
                         upload.setFile(file.getBytes());
                         upload.setName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()));
@@ -131,8 +91,8 @@ public class DocUploadController {
                                 .path(upload.getName())
                                 .toUriString());
                         upload.setUser(user);
-                        docUploadRepository.save(upload);                        
-                    }    
+                        docUploadRepository.save(upload);
+                    }
                 } else {
                     return new ResponseEntity("Please Select PDF File", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -181,18 +141,18 @@ public class DocUploadController {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<?> get_service() {
-               List<DocUpload> docUploads = docUploadRepository.findAll();
-               if(docUploads.isEmpty())
-               return new ResponseEntity(HttpStatus.NO_CONTENT);               
+        List<DocUpload> docUploads = docUploadRepository.findAll();
+        if (docUploads.isEmpty())
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         return new ResponseEntity(docUploads, HttpStatus.OK);
     }
 
     @GetMapping("/get_docs/{user}")
     public ResponseEntity<?> get_email(@PathVariable String user) {
         List<DocUpload> docUploads = docUploadRepository.findByUser(user);
-        if(docUploads.isEmpty())
-        return new ResponseEntity(HttpStatus.NO_CONTENT);               
- return new ResponseEntity(docUploads, HttpStatus.OK);
+        if (docUploads.isEmpty())
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(docUploads, HttpStatus.OK);
 
     }
 
@@ -214,7 +174,7 @@ public class DocUploadController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData(docUpload.get(0).getName(), docUpload.get(0).getName());
         // headers.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        headers.setContentType(MediaType.APPLICATION_PDF); 
+        headers.setContentType(MediaType.APPLICATION_PDF);
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(docUpload.get(0).getFile());
@@ -222,11 +182,11 @@ public class DocUploadController {
 
     // @GetMapping("/get/{name}")
     // public ResponseEntity<byte[]> getFile(@PathVariable String name) {
-    //     List<DocUpload> docUpload = docUploadRepository.findByName(name);
+    // List<DocUpload> docUpload = docUploadRepository.findByName(name);
 
-    //     return ResponseEntity.ok()
-    //             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-    //                     docUpload.get(0).getName() + "\"")
-    //             .body(docUpload.get(0).getFile());
+    // return ResponseEntity.ok()
+    // .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+    // docUpload.get(0).getName() + "\"")
+    // .body(docUpload.get(0).getFile());
     // }
 }

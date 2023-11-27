@@ -37,14 +37,18 @@ public class ProjectInfo {
     private Integer price;
     @Column(name = "projdescription")
     private String projdescription;
+    @Column(name="projlocation", nullable = true)
+    private String map_location;
+    @Column(name="keyword", nullable = true)
+    private String map_keyword;
     @Column(nullable = false)
     private String user_signature;
     
-    @Column(unique = true, insertable = false, updatable = false)
-    private Integer projectLocationID;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "projectLocationID")
-    private ProjectLocation projectLocation;
+    // @Column(unique = true, insertable = false, updatable = false)
+    // private Integer projectLocationID;
+    // @OneToOne(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "projectLocationID")
+    // private ProjectLocation projectLocation;
 
     @Column(unique = true, insertable = false, updatable = false)
     private Integer projectUploadID;

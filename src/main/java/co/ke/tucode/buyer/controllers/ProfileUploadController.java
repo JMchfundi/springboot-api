@@ -47,7 +47,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class ProfileUploadController {
 
     @Autowired
-    private ProfileUploadRepository profileUploadRepository; 
+    private ProfileUploadRepository profileUploadRepository;
 
     /*
      * .......................obr_put_file upload db
@@ -66,12 +66,11 @@ public class ProfileUploadController {
         // .stream().collect(Collectors.toList()).get(0);
         if (!file.isEmpty()) {
             try {
-                if(profileUploadRepository.existsByName(filename + file.getOriginalFilename())){
+                if (profileUploadRepository.existsByName(filename + file.getOriginalFilename())) {
                     upload.setFile(file.getBytes());
                     upload.setUser(user);
-                    profileUploadRepository.save(upload);    
-                }
-                else {
+                    profileUploadRepository.save(upload);
+                } else {
                     upload.setFile(file.getBytes());
                     upload.setName(filename + file.getOriginalFilename());
                     upload.setUrl(ServletUriComponentsBuilder
@@ -102,21 +101,20 @@ public class ProfileUploadController {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<?> get_service() {
-               List<ProfileUpload> docUploads = profileUploadRepository.findAll();
-               if(docUploads.isEmpty())
-               return new ResponseEntity(HttpStatus.NO_CONTENT);               
+        List<ProfileUpload> docUploads = profileUploadRepository.findAll();
+        if (docUploads.isEmpty())
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         return new ResponseEntity(docUploads, HttpStatus.OK);
     }
 
     @GetMapping("/get_docs/{user}")
     public ResponseEntity<?> get_email(@PathVariable String user) {
         List<ProfileUpload> docUploads = profileUploadRepository.findByUser(user);
-        if(docUploads.isEmpty())
-        return new ResponseEntity(HttpStatus.NO_CONTENT);               
- return new ResponseEntity(docUploads, HttpStatus.OK);
+        if (docUploads.isEmpty())
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(docUploads, HttpStatus.OK);
 
     }
-
 
     @GetMapping(value = "/get/{name}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getFile(@PathVariable String name) {
@@ -125,19 +123,19 @@ public class ProfileUploadController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData(docUpload.get(0).getName(), docUpload.get(0).getName());
         // headers.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        headers.setContentType(MediaType.APPLICATION_PDF); 
+        headers.setContentType(MediaType.APPLICATION_PDF);
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(docUpload.get(0).getFile());
     }
 
-// @GetMapping("/get/{name}")
-// public ResponseEntity<byte[]> getFile(@PathVariable String name) {
-//     List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
+    // @GetMapping("/get/{name}")
+    // public ResponseEntity<byte[]> getFile(@PathVariable String name) {
+    // List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
 
-//     return ResponseEntity.ok()
-//             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-//                     docUpload.get(0).getName() + "\"")
-//             .body(docUpload.get(0).getFile());
-// }
+    // return ResponseEntity.ok()
+    // .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+    // docUpload.get(0).getName() + "\"")
+    // .body(docUpload.get(0).getFile());
+    // }
 }
