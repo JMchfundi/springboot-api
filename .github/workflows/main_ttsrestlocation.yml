@@ -50,4 +50,4 @@ jobs:
           app-name: 'TTSRestLocation'
           slot-name: 'Production'
           package: '*.jar'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_88105B94E9824B9E91F291BCB20E9FC1 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_47423830FE464462916573AAB00986C6 }}
