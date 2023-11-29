@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Thu Nov 23 11:46:53 EAT 2023:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-018b-fb5c-506e-000001bead00 
+Wed Nov 29 11:49:34 EAT 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-018c-1a44-ead7-000001bca8e0 
 on database directory C:\Users\Jakida\Downloads\africana_api-master\africana_api-master\mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@2a139a55 
 Loaded from file:/C:/Users/Jakida/.m2/repository/org/apache/derby/derby/10.16.1.1/derby-10.16.1.1.jar
 java.vendor=Eclipse Adoptium

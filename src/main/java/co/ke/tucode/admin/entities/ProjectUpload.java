@@ -24,10 +24,10 @@ public class ProjectUpload {
     
     @Lob
     @Column(nullable = true)
-    private Byte[] image;
+    private byte[] image;
 
     @Column(nullable = true)
-    private String srcurl;
+    private String projectname;
 
     @Column(nullable = false)
     private String user_signature;

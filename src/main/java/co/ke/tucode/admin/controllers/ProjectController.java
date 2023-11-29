@@ -48,7 +48,8 @@ public class ProjectController {
         if (service.existsByName(projectInfo.getProjectname()))
             return new ResponseEntity(HttpStatus.CONFLICT);
         else {
-            // projectInfo.setProjectLocation(new ProjectLocation(null, null, null, projectInfo.getUser_signature()));
+            // projectInfo.setProjectLocation(new ProjectLocation(null, null, null,
+            // projectInfo.getUser_signature()));
             projectInfo.setProjectUpload(new ProjectUpload(null, null, null, projectInfo.getUser_signature()));
             service.save(projectInfo);
             return new ResponseEntity(projectInfo, HttpStatus.OK);
@@ -59,24 +60,27 @@ public class ProjectController {
      * .......................obr_post_service insert db
      * data.............................
      */
-    // @RequestMapping(value = "/post_loc", method = RequestMethod.POST, consumes = {
-    //         MediaType.APPLICATION_FORM_URLENCODED_VALUE })
-    // public ResponseEntity<?> post_loc(@ModelAttribute ProjectLocationPayload locationPayload,
-    //         UriComponentsBuilder builder) {
-    //     ProjectLocation projectLocation = null;
-    //     ProjectInfo projectInfo = null;
-    //     if (service.existsByName(locationPayload.getProjectname())) {
-    //         projectLocation = locationRepoService
-    //                 .findById(service.findByName(locationPayload.getProjectname()).get(0).getProjectLocationID())
-    //                 .stream().collect(Collectors.toList()).get(0);
-    //         projectLocation.setMap_keyword(locationPayload.getKeyword());
-    //         projectLocation.setMap_location(locationPayload.getProjlocation());
-    //         projectInfo = service.findByName(locationPayload.getProjectname()).get(0);
-    //         projectInfo.setProjectLocation(projectLocation);
-    //         service.save(projectInfo);
-    //         return new ResponseEntity(HttpStatus.OK);
-    //     } else
-    //         return new ResponseEntity(locationPayload.getProjectname(), HttpStatus.BAD_REQUEST);
+    // @RequestMapping(value = "/post_loc", method = RequestMethod.POST, consumes =
+    // {
+    // MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+    // public ResponseEntity<?> post_loc(@ModelAttribute ProjectLocationPayload
+    // locationPayload,
+    // UriComponentsBuilder builder) {
+    // ProjectLocation projectLocation = null;
+    // ProjectInfo projectInfo = null;
+    // if (service.existsByName(locationPayload.getProjectname())) {
+    // projectLocation = locationRepoService
+    // .findById(service.findByName(locationPayload.getProjectname()).get(0).getProjectLocationID())
+    // .stream().collect(Collectors.toList()).get(0);
+    // projectLocation.setMap_keyword(locationPayload.getKeyword());
+    // projectLocation.setMap_location(locationPayload.getProjlocation());
+    // projectInfo = service.findByName(locationPayload.getProjectname()).get(0);
+    // projectInfo.setProjectLocation(projectLocation);
+    // service.save(projectInfo);
+    // return new ResponseEntity(HttpStatus.OK);
+    // } else
+    // return new ResponseEntity(locationPayload.getProjectname(),
+    // HttpStatus.BAD_REQUEST);
 
     // }
 
@@ -86,41 +90,36 @@ public class ProjectController {
      */
     @RequestMapping(value = "/post_file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> put_file(@RequestParam("projectname") String projectname,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile [] files) {
         ProjectUpload projectUpload = null;
         ProjectInfo projectInfo = null;
         if (service.existsByName(projectname)) {
             projectUpload = uploadRepoService
-            .findById(service.findByName(projectname).get(0).getProjectUploadID())
-            .stream().collect(Collectors.toList()).get(0);
-            if (!file.isEmpty()) {
-                try {
-                    Byte[] bytes = new Byte[file.getBytes().length];
-                    
-                    int i = 0;
-                    for (Byte b : file.getBytes()) {
-                        bytes[i++] = b;
+                    .findById(service.findByName(projectname).get(0).getProjectUploadID())
+                    .stream().collect(Collectors.toList()).get(0);
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    try {
+                        projectUpload.setImage(file.getBytes());
+                    } catch (IOException e) {
+                        return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
                     }
-
-                    projectUpload.setImage(bytes);
-                } catch (IOException e) {
-                    return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
-                }
-                projectInfo = service.findByName(projectname).get(0);
-                projectInfo.setProjectUpload(projectUpload);
-                service.save(projectInfo);
-                return new ResponseEntity(HttpStatus.OK);
-            } else
-                return new ResponseEntity("kindly choose a file",
-                        HttpStatus.EXPECTATION_FAILED);
+                    projectInfo = service.findByName(projectname).get(0);
+                    projectInfo.setProjectUpload(projectUpload);
+                    service.save(projectInfo);
+                    return new ResponseEntity(HttpStatus.OK);
+                } else
+                    return new ResponseEntity("kindly choose a file",
+                            HttpStatus.EXPECTATION_FAILED);
+            }
         }
 
         else
             return new ResponseEntity(projectname, HttpStatus.BAD_REQUEST);
-
+        return new ResponseEntity(projectname, HttpStatus.BAD_REQUEST);
     }
 
-        /*
+    /*
      * .......................obr_put_file upload db
      * data.............................
      */
@@ -130,15 +129,15 @@ public class ProjectController {
         ProjectInfo projectInfo = null;
         if (service.existsByName(uploadPayload.getProjectname())) {
             projectUpload = uploadRepoService
-            .findById(service.findByName(uploadPayload.getProjectname()).get(0).getProjectUploadID())
-            .stream().collect(Collectors.toList()).get(0);
+                    .findById(service.findByName(uploadPayload.getProjectname()).get(0).getProjectUploadID())
+                    .stream().collect(Collectors.toList()).get(0);
 
-                    projectUpload.setSrcurl(uploadPayload.getSrcurl());
-                projectInfo = service.findByName(uploadPayload.getProjectname()).get(0);
-                projectInfo.setProjectUpload(projectUpload);
-                service.save(projectInfo);
-                return new ResponseEntity(HttpStatus.OK);
-}
+            // projectUpload.setSrcurl(uploadPayload.getSrcurl());
+            projectInfo = service.findByName(uploadPayload.getProjectname()).get(0);
+            projectInfo.setProjectUpload(projectUpload);
+            service.save(projectInfo);
+            return new ResponseEntity(HttpStatus.OK);
+        }
 
         else
             return new ResponseEntity(uploadPayload.getProjectname(), HttpStatus.BAD_REQUEST);
