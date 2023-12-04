@@ -15,6 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "ProjectDataTableUpdload")
 public class ProjectUpload {
 
     @Id
@@ -26,9 +27,7 @@ public class ProjectUpload {
     @Column(nullable = true)
     private byte[] image;
 
-    @Column(nullable = true)
-    private String projectname;
-
-    @Column(nullable = false)
-    private String user_signature;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "info_id", nullable = false)
+    private ProjectInfo info;
 }

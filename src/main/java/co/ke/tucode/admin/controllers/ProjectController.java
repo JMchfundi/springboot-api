@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import co.ke.tucode.admin.entities.ProjectInfo;
@@ -25,6 +27,7 @@ import co.ke.tucode.admin.payloads.ProjectUploadPayload;
 import co.ke.tucode.admin.repositories.ProjectLocationRepo;
 import co.ke.tucode.admin.repositories.ProjectUploadRepo;
 import co.ke.tucode.admin.services.ProjectInfoService;
+import co.ke.tucode.buyer.entities.DocUpload;
 
 @RestController
 @RequestMapping("/project_api/v1")
@@ -50,7 +53,7 @@ public class ProjectController {
         else {
             // projectInfo.setProjectLocation(new ProjectLocation(null, null, null,
             // projectInfo.getUser_signature()));
-            projectInfo.setProjectUpload(new ProjectUpload(null, null, null, projectInfo.getUser_signature()));
+            // projectInfo.setProjectUpload(new ProjectUpload(null, null, null));
             service.save(projectInfo);
             return new ResponseEntity(projectInfo, HttpStatus.OK);
         }
@@ -83,66 +86,6 @@ public class ProjectController {
     // HttpStatus.BAD_REQUEST);
 
     // }
-
-    /*
-     * .......................obr_put_file upload db
-     * data.............................
-     */
-    @RequestMapping(value = "/post_file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> put_file(@RequestParam("projectname") String projectname,
-            @RequestParam("file") MultipartFile [] files) {
-        ProjectUpload projectUpload = null;
-        ProjectInfo projectInfo = null;
-        if (service.existsByName(projectname)) {
-            projectUpload = uploadRepoService
-                    .findById(service.findByName(projectname).get(0).getProjectUploadID())
-                    .stream().collect(Collectors.toList()).get(0);
-            for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    try {
-                        projectUpload.setImage(file.getBytes());
-                    } catch (IOException e) {
-                        return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
-                    }
-                    projectInfo = service.findByName(projectname).get(0);
-                    projectInfo.setProjectUpload(projectUpload);
-                    service.save(projectInfo);
-                    return new ResponseEntity(HttpStatus.OK);
-                } else
-                    return new ResponseEntity("kindly choose a file",
-                            HttpStatus.EXPECTATION_FAILED);
-            }
-        }
-
-        else
-            return new ResponseEntity(projectname, HttpStatus.BAD_REQUEST);
-        return new ResponseEntity(projectname, HttpStatus.BAD_REQUEST);
-    }
-
-    /*
-     * .......................obr_put_file upload db
-     * data.............................
-     */
-    @RequestMapping(value = "/post_url", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<?> put_url(@ModelAttribute ProjectUploadPayload uploadPayload) {
-        ProjectUpload projectUpload = null;
-        ProjectInfo projectInfo = null;
-        if (service.existsByName(uploadPayload.getProjectname())) {
-            projectUpload = uploadRepoService
-                    .findById(service.findByName(uploadPayload.getProjectname()).get(0).getProjectUploadID())
-                    .stream().collect(Collectors.toList()).get(0);
-
-            // projectUpload.setSrcurl(uploadPayload.getSrcurl());
-            projectInfo = service.findByName(uploadPayload.getProjectname()).get(0);
-            projectInfo.setProjectUpload(projectUpload);
-            service.save(projectInfo);
-            return new ResponseEntity(HttpStatus.OK);
-        }
-
-        else
-            return new ResponseEntity(uploadPayload.getProjectname(), HttpStatus.BAD_REQUEST);
-
-    }
 
     /*
      * .......................obr_get_service retrieve all db

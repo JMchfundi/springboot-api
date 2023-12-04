@@ -48,7 +48,7 @@ public class DocUploadController {
     @RequestMapping(value = "/post_file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> put_file(@RequestParam("filename") String filename,
             @RequestParam("user") String user,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("files") List<MultipartFile> files) {
         DocUpload upload = new DocUpload();
         // ProjectUpload projectUpload = null;
         // ProjectInfo projectInfo = null;
@@ -56,37 +56,40 @@ public class DocUploadController {
         // projectUpload = uploadRepoService
         // .findById(service.findByName(projectname).get(0).getProjectUploadID())
         // .stream().collect(Collectors.toList()).get(0);
-        if (!file.isEmpty()) {
+        if (!files.isEmpty()) {
             try {
-                // Files.copy(file.getInputStream(),
-                // Paths.get("uploads").resolve(filename+file.getOriginalFilename()));
-                if (FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("pdf")) {
-                    if (docUploadRepository
-                            .existsByName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()))) {
-                        upload = docUploadRepository
-                                .findByName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()))
-                                .get(0);
-                        upload.setFile(file.getBytes());
-                        upload.setUser(user);
-                        docUploadRepository.save(upload);
-                    } else {
-                        upload.setFile(file.getBytes());
-                        upload.setName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()));
-                        upload.setUrl(ServletUriComponentsBuilder
-                                .fromCurrentContextPath()
-                                .path("/doc_api/v1/get/")
-                                .path(upload.getName())
-                                .toUriString());
-                        upload.setUser(user);
-                        docUploadRepository.save(upload);
+                for (MultipartFile file : files) {
+                    // Files.copy(file.getInputStream(),
+                    // Paths.get("uploads").resolve(filename+file.getOriginalFilename()));
+                    if (FilenameUtils.getExtension(file.getOriginalFilename()).equalsIgnoreCase("pdf")) {
+                        if (docUploadRepository
+                                .existsByName(
+                                        filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()))) {
+                            upload = docUploadRepository
+                                    .findByName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()))
+                                    .get(0);
+                            upload.setFile(file.getBytes());
+                            upload.setUser(user);
+                            docUploadRepository.save(upload);
+                            return new ResponseEntity(HttpStatus.OK);
+                        } else {
+                            upload.setFile(file.getBytes());
+                            upload.setName(filename + "." + FilenameUtils.getExtension(file.getOriginalFilename()));
+                            upload.setUrl(ServletUriComponentsBuilder
+                                    .fromCurrentContextPath()
+                                    .path("/doc_api/v1/get/")
+                                    .path(upload.getName())
+                                    .toUriString());
+                            upload.setUser(user);
+                            docUploadRepository.save(upload);
+                            return new ResponseEntity(HttpStatus.OK);
+                        }
                     }
-                } else {
-                    return new ResponseEntity("Please Select PDF File", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
+                return new ResponseEntity("Please Select PDF File", HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (IOException e) {
                 return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
             }
-            return new ResponseEntity(HttpStatus.OK);
         } else
             return new ResponseEntity("kindly choose a file",
                     HttpStatus.EXPECTATION_FAILED);
@@ -94,31 +97,6 @@ public class DocUploadController {
 
         // else
         // return new ResponseEntity(projectname, HttpStatus.BAD_REQUEST);
-
-    }
-
-    /*
-     * .......................obr_put_file upload db
-     * data.............................
-     */
-    @RequestMapping(value = "/post_url", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<?> put_url(@ModelAttribute ProjectUploadPayload uploadPayload) {
-        ProjectUpload projectUpload = null;
-        ProjectInfo projectInfo = null;
-        if (service.existsByName(uploadPayload.getProjectname())) {
-            projectUpload = uploadRepoService
-                    .findById(service.findByName(uploadPayload.getProjectname()).get(0).getProjectUploadID())
-                    .stream().collect(Collectors.toList()).get(0);
-
-            // projectUpload.setSrcurl(uploadPayload.getSrcurl());
-            projectInfo = service.findByName(uploadPayload.getProjectname()).get(0);
-            projectInfo.setProjectUpload(projectUpload);
-            service.save(projectInfo);
-            return new ResponseEntity(HttpStatus.OK);
-        }
-
-        else
-            return new ResponseEntity(uploadPayload.getProjectname(), HttpStatus.BAD_REQUEST);
 
     }
 

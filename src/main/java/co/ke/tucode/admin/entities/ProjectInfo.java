@@ -1,6 +1,10 @@
 package co.ke.tucode.admin.entities;
 
 
+import java.util.Set;
+
+import org.springframework.data.domain.Page;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "ProjectData")
+@Table(name = "ProjectDataTable")
 public class ProjectInfo {
 
     @Id
@@ -51,9 +55,13 @@ public class ProjectInfo {
     // @JoinColumn(name = "projectLocationID")
     // private ProjectLocation projectLocation;
 
-    @Column(unique = true, insertable = false, updatable = false)
-    private Integer projectUploadID;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "projectUploadID")
-    private ProjectUpload projectUpload;
+     @OneToMany(mappedBy = "info", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Set<ProjectUpload> uploads;
+
+    // @Column(unique = true, insertable = false, updatable = false)
+    // private Integer projectUploadID;
+    // @OneToMany(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "projectUploadID")
+    // private ProjectUpload projectUpload;
 }
