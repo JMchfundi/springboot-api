@@ -15,14 +15,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "ProjectDataTableUpdload")
+@Table(name = "ProjectTT")
 public class ProjectUpload {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "projectUploadID", updatable = false, nullable = false)
     private Integer id;
-    
+
+    @Column(name = "doc_name", nullable = false)
+    private String name;
+
+    @Column(name = "doc_url", nullable = true)
+    private String url;
+
     @Lob
     @Column(nullable = true)
     private byte[] image;

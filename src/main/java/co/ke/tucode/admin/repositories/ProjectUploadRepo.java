@@ -8,6 +8,8 @@ import co.ke.tucode.admin.entities.ProjectUpload;
 
 
 public interface ProjectUploadRepo extends JpaRepository<ProjectUpload, Integer> {
+
+    boolean existsByName(String string);
     //public List<ProjectUpload> findByName(String string);
     // public boolean existsByEmail(String email); 
     // public void deleteByEmail(String email);    

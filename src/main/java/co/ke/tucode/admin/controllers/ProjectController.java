@@ -22,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import co.ke.tucode.admin.entities.ProjectInfo;
 import co.ke.tucode.admin.entities.ProjectLocation;
 import co.ke.tucode.admin.entities.ProjectUpload;
+import co.ke.tucode.admin.payloads.ProjectDataPayload;
 import co.ke.tucode.admin.payloads.ProjectLocationPayload;
 import co.ke.tucode.admin.payloads.ProjectUploadPayload;
 import co.ke.tucode.admin.repositories.ProjectLocationRepo;
@@ -41,22 +42,54 @@ public class ProjectController {
     private ProjectUploadRepo uploadRepoService;
 
     /*
-     * .......................obr_post_service insert db
+     * .......................obr_put_file upload db
      * data.............................
      */
-    @RequestMapping(value = "/post_info", method = RequestMethod.POST, consumes = {
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE })
-    public ResponseEntity<?> post_service(@ModelAttribute ProjectInfo projectInfo,
-            UriComponentsBuilder builder) {
-        if (service.existsByName(projectInfo.getProjectname()))
-            return new ResponseEntity(HttpStatus.CONFLICT);
-        else {
-            // projectInfo.setProjectLocation(new ProjectLocation(null, null, null,
-            // projectInfo.getUser_signature()));
-            // projectInfo.setProjectUpload(new ProjectUpload(null, null, null));
-            service.save(projectInfo);
-            return new ResponseEntity(projectInfo, HttpStatus.OK);
-        }
+    @RequestMapping(value = "/post_proj_data", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> put_file(@RequestParam("projectData") ProjectDataPayload projectDataPayload,
+            @RequestParam("files") List<MultipartFile> files) {
+        ProjectUpload upload = new ProjectUpload();
+        ProjectInfo projectInfo = new ProjectInfo();
+        if (!files.isEmpty()) {
+            try {
+                projectInfo.setConstname(projectDataPayload.getConstname());
+                projectInfo.setHousetype(projectDataPayload.getHousetype());
+                projectInfo.setMap_keyword(projectDataPayload.getMap_keyword());
+                projectInfo.setMap_location(projectDataPayload.getMap_location());
+                projectInfo.setNumofunits(projectDataPayload.getNumofunits());
+                projectInfo.setPrice(projectDataPayload.getPrice());
+                projectInfo.setProjaddress(projectDataPayload.getProjaddress());
+                projectInfo.setProjdescription(projectDataPayload.getProjdescription());
+                projectInfo.setProjectname(projectDataPayload.getProjectname());
+                projectInfo.setSizeinsqkm(projectDataPayload.getSizeinsqkm());
+                projectInfo.setUser_signature(projectDataPayload.getUser_signature());
+
+                service.save(projectInfo);
+
+                for (MultipartFile file : files) {
+                    upload.setImage(file.getBytes());
+                    upload.setName(projectInfo.getProjectname() + file.getOriginalFilename());
+                    upload.setUrl(ServletUriComponentsBuilder
+                            .fromCurrentContextPath()
+                            .path("/profile_api/v1/get/")
+                            .path(upload.getName())
+                            .toUriString());
+                    upload.setInfo(projectInfo);
+                    uploadRepoService.save(upload);
+                    return new ResponseEntity(HttpStatus.OK);
+                }
+                return new ResponseEntity("Please Select Valid File", HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (IOException e) {
+                return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
+            }
+        } else
+            return new ResponseEntity("kindly choose a file",
+                    HttpStatus.EXPECTATION_FAILED);
+        // }
+
+        // else
+        // return new ResponseEntity(projectname, HttpStatus.BAD_REQUEST);
+
     }
 
     /*
