@@ -18,12 +18,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "ProjectTT")
 public class ProjectInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)   
     private Integer id;
 
     @Column(name = "projectname", unique = true, updatable = false, nullable = false)

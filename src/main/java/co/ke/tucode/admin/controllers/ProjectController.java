@@ -11,9 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,6 +27,7 @@ import co.ke.tucode.admin.entities.ProjectUpload;
 import co.ke.tucode.admin.payloads.ProjectDataPayload;
 import co.ke.tucode.admin.payloads.ProjectLocationPayload;
 import co.ke.tucode.admin.payloads.ProjectUploadPayload;
+import co.ke.tucode.admin.repositories.ProjectInfoRepo;
 import co.ke.tucode.admin.repositories.ProjectLocationRepo;
 import co.ke.tucode.admin.repositories.ProjectUploadRepo;
 import co.ke.tucode.admin.services.ProjectInfoService;
@@ -40,14 +43,17 @@ public class ProjectController {
     private ProjectLocationRepo locationRepoService;
     @Autowired
     private ProjectUploadRepo uploadRepoService;
+    @Autowired
+    private ProjectInfoRepo projectInfoRepo;
 
     /*
      * .......................obr_put_file upload db
      * data.............................
      */
-    @RequestMapping(value = "/post_proj_data", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> put_file(@RequestParam("projectData") ProjectDataPayload projectDataPayload,
-            @RequestParam("files") List<MultipartFile> files) {
+    @RequestMapping(value = "/post_proj_data", method = RequestMethod.POST, 
+    consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}) 
+    public ResponseEntity<?> put_file(@RequestPart("string") ProjectDataPayload projectDataPayload,
+            @RequestPart("files") List<MultipartFile> files) {
         ProjectUpload upload = new ProjectUpload();
         ProjectInfo projectInfo = new ProjectInfo();
         if (!files.isEmpty()) {
@@ -126,7 +132,7 @@ public class ProjectController {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<?> get_service() {
-        List<ProjectInfo> projectInfos = service.findAll();
+        List<ProjectInfo> projectInfos = projectInfoRepo.findAll();
 
         if (projectInfos.isEmpty())
             return new ResponseEntity(HttpStatus.NO_CONTENT);

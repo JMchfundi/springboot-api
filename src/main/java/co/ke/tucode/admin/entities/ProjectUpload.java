@@ -15,15 +15,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "ProjectTT")
 public class ProjectUpload {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "projectUploadID", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)    
     private Integer id;
 
-    @Column(name = "doc_name", nullable = false)
+    @Column(name = "doc_name", nullable = true)
     private String name;
 
     @Column(name = "doc_url", nullable = true)
