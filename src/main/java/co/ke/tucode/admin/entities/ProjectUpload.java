@@ -34,7 +34,7 @@ public class ProjectUpload {
     private byte[] image;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "info_id", nullable = false)
+    @JoinColumn(name = "projectinfo_id", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ProjectInfo info;
 }

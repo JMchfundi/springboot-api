@@ -53,7 +53,7 @@ public class ProjectController {
     @RequestMapping(value = "/post_proj_data", method = RequestMethod.POST, 
     consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}) 
     public ResponseEntity<?> put_file(@RequestPart("string") ProjectDataPayload projectDataPayload,
-            @RequestPart("files") List<MultipartFile> files) {
+            @RequestPart List<MultipartFile> files) {
         ProjectUpload upload = new ProjectUpload();
         ProjectInfo projectInfo = new ProjectInfo();
         if (!files.isEmpty()) {

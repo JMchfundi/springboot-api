@@ -21,7 +21,8 @@ import lombok.Setter;
 public class ProjectInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)   
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  
+    @Column(name = "projectinfo_id") 
     private Integer id;
 
     @Column(name = "projectname", unique = true, updatable = false, nullable = false)
