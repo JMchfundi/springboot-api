@@ -1,7 +1,7 @@
 package co.ke.tucode.admin.entities;
 
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 
@@ -22,6 +22,7 @@ public class ProjectInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  
+    @SequenceGenerator(name="project_info_generator", sequenceName = "project_info_seq", allocationSize=50)
     @Column(name = "projectinfo_id") 
     private Integer id;
 
@@ -56,7 +57,7 @@ public class ProjectInfo {
 
      @OneToMany(mappedBy = "info", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
-    private Set<ProjectUpload> uploads;
+    private List<ProjectUpload> uploads;
 
     // @Column(unique = true, insertable = false, updatable = false)
     // private Integer projectUploadID;

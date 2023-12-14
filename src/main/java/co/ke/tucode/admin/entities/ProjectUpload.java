@@ -20,10 +20,11 @@ import lombok.Setter;
 public class ProjectUpload {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="project_upload_generator", sequenceName = "project_upload_seq", allocationSize=50)    
     private Integer id;
 
-    @Column(name = "doc_name", nullable = false)
+    @Column(name = "doc_name", updatable = false, nullable = false)
     private String name;
 
     @Column(name = "doc_url", nullable = true)
