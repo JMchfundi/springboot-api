@@ -128,8 +128,8 @@ public class ProjectController {
      * for data display to the interface
      */
     @RequestMapping(value = "/get_by_name", method = RequestMethod.GET)
-    public ResponseEntity<?> getByName(@RequestParam String projectname) {
-        List<ProjectInfo> projectInfos = service.findByProjectname(projectname);
+    public ResponseEntity<?> get_user(@RequestParam(name = "projectName") String projectName) {
+        List<ProjectInfo> projectInfos = service.findByProjectname(projectName);
 
         if (projectInfos.isEmpty())
             return new ResponseEntity(HttpStatus.NO_CONTENT);
