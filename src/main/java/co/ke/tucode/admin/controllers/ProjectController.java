@@ -123,6 +123,10 @@ public class ProjectController {
         return new ResponseEntity(projectInfos, HttpStatus.OK);
     }
 
+        /*
+     * .......................get_by_name 
+     * for data display to the interface
+     */
     @RequestMapping(value = "/get_by_name", method = RequestMethod.GET)
     public ResponseEntity<?> getByName(@RequestParam String projectname) {
         List<ProjectInfo> projectInfos = service.findByProjectname(projectname);
