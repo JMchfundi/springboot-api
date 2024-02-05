@@ -34,12 +34,18 @@ public class ProjectMainData {
     cascade = CascadeType.ALL)
     private ProjectLocationData location;
 
-    @Column(name = "constname")
-    private String constname;
-    @Column(name = "projaddress")
-    private String projaddress;
-    @Column(name = "housetype")
-    private String housetype;
+    @Column(name = "phone")
+    private String phone;
+    @Column(name = "bed_sizes")
+    private String[] bed_sizes;
+    @Column(name = "included")
+    private String included;
+
+    @OneToOne(mappedBy = "mainData", fetch = FetchType.LAZY,
+    cascade = CascadeType.ALL)
+    private ProjectPricingData pricing;
+
+
     @Column(name = "sizeinsqkm")
     private Integer sizeinsqkm;
     @Column(name = "numofunits")

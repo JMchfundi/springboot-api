@@ -17,33 +17,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProjectLocationData {
+public class ProjectPricingData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SequenceGenerator(name="project_location_data_generator", 
-    sequenceName = "project_location_data_seq", allocationSize=50)  
-    @Column(name = "project_location_data_id")   
+    @SequenceGenerator(name="project_Pricing_data_generator", 
+    sequenceName = "project_Pricing_data_seq", allocationSize=50)  
+    @Column(name = "project_Pricing_data_id")   
     private Integer id;
 
-    @Column(name = "country")
-    private String country;
-
-    @Column(name = "city")
-    private String city;
-
-    @Column(name = "addr")
-    private String addr;
-
-    @Column(name = "subway_access")
-    private Boolean subway_access;
-
-    @Column(name = "distance_from_center")
-    private Integer distance_from_center;
-
-    @OneToOne(mappedBy = "locationData", fetch = FetchType.LAZY,
+    @OneToOne(mappedBy = "bed", fetch = FetchType.LAZY,
     cascade = CascadeType.ALL)
-    private ProjectLocationCordinatesData coordinates;
+    private ProjectLocationPricingData bed;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_main_data_id", nullable = false)
