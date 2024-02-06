@@ -1,4 +1,4 @@
-package co.ke.tucode.admin.entities;
+package co.ke.tucode.admin.entities.houseentities;
 
 import java.util.Date;
 
@@ -17,22 +17,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProjectLocationPricingData {
+public class ProjectLocationPricingData2 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SequenceGenerator(name="project_location_pricing_data_generator", 
-    sequenceName = "project_location_pricing_data_seq", allocationSize=50)    
+    @SequenceGenerator(name="project_location_pricing_data2_generator", 
+    sequenceName = "project_location_pricing_data2_seq", allocationSize=50)    
     private Integer id;
 
-    @Column(name = "king")
-    private Integer king;
+    @Column(name = "breakfast")
+    private Integer breakfast;
 
-    @Column(name = "queen")
-    private Integer queen;
+    @Column(name = "dinner")
+    private Integer dinner;
 
-    @Column(name = "normal")
-    private Integer normal;
+    @Column(name = "all-in")
+    private Integer allin;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_Pricing_data_id", nullable = false)

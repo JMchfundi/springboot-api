@@ -1,4 +1,4 @@
-package co.ke.tucode.admin.entities;
+package co.ke.tucode.admin.entities.houseentities;
 
 import java.util.Date;
 
