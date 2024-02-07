@@ -53,7 +53,7 @@ public class ProjectMainData {
     private String desc;
 
     @OneToMany(mappedBy = "mainData", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ProjectUpload> img;
+    private List<ProjectMainUpload> img;
 
     @Column(nullable = false)
     private String user_signature;

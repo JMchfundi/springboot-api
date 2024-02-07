@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import co.ke.tucode.admin.entities.houseentities.ProjectUpload;
+import co.ke.tucode.admin.entities.houseentities.ProjectMainUpload;
 
-public interface ProjectUploadRepo extends JpaRepository<ProjectUpload, Integer> {
+public interface ProjectMainUploadRepo extends JpaRepository<ProjectMainUpload, Integer> {
     // public List<ProjectInfo> findByProjectname(String projectname);
     // public boolean existsByProjectname(String name); 
     // public void deleteByProjectname(String name);

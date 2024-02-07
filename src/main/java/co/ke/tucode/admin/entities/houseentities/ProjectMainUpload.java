@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProjectUpload {
+public class ProjectMainUpload {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
