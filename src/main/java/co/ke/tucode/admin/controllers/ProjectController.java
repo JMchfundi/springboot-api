@@ -58,22 +58,22 @@ public class ProjectController {
         ProjectUpload upload = new ProjectUpload();
         ProjectInfo projectInfo = new ProjectInfo();
         if (!files.isEmpty()) {
-            try {
-                projectInfo.setConstname(projectDataPayload.getConstname());
-                projectInfo.setHousetype(projectDataPayload.getHousetype());
-                projectInfo.setMap_keyword(projectDataPayload.getMap_keyword());
-                projectInfo.setMap_location(projectDataPayload.getMap_location());
-                projectInfo.setNumofunits(projectDataPayload.getNumofunits());
-                projectInfo.setPrice(projectDataPayload.getPrice());
-                projectInfo.setProjaddress(projectDataPayload.getProjaddress());
-                projectInfo.setProjdescription(projectDataPayload.getProjdescription());
-                projectInfo.setProjectname(projectDataPayload.getProjectname());
-                projectInfo.setSizeinsqkm(projectDataPayload.getSizeinsqkm());
-                projectInfo.setUser_signature(projectDataPayload.getUser_signature());
+            for (MultipartFile file : files) {
+                try {    
+                    if (!service.existsByProjectname(projectInfo.getProjectname())) {
+                        projectInfo.setConstname(projectDataPayload.getConstname());
+                        projectInfo.setHousetype(projectDataPayload.getHousetype());
+                        projectInfo.setMap_keyword(projectDataPayload.getMap_keyword());
+                        projectInfo.setMap_location(projectDataPayload.getMap_location());
+                        projectInfo.setNumofunits(projectDataPayload.getNumofunits());
+                        projectInfo.setPrice(projectDataPayload.getPrice());
+                        projectInfo.setProjaddress(projectDataPayload.getProjaddress());
+                        projectInfo.setProjdescription(projectDataPayload.getProjdescription());
+                        projectInfo.setProjectname(projectDataPayload.getProjectname());
+                        projectInfo.setSizeinsqkm(projectDataPayload.getSizeinsqkm());
+                        projectInfo.setUser_signature(projectDataPayload.getUser_signature());
+                        service.save(projectInfo);
 
-                if (!service.existsByProjectname(projectInfo.getProjectname())) {
-                    service.save(projectInfo);
-                    for (MultipartFile file : files) {
                         upload.setImage(file.getBytes());
                         upload.setName(projectInfo.getProjectname() + file.getOriginalFilename());
                         upload.setUrl(ServletUriComponentsBuilder
@@ -83,27 +83,24 @@ public class ProjectController {
                                 .toUriString());
                         upload.setInfo(projectInfo);
                         uploadRepoService.save(upload);
-                        return new ResponseEntity(HttpStatus.OK);
+                        return new ResponseEntity(HttpStatus.OK);    
+                    } else {
+                            upload.setImage(file.getBytes());
+                            upload.setName(projectInfo.getProjectname() + file.getOriginalFilename());
+                            upload.setUrl(ServletUriComponentsBuilder
+                                    .fromCurrentContextPath()
+                                    .path("/profile_api/v1/get/")
+                                    .path(upload.getName())
+                                    .toUriString());
+                            upload.setInfo(service.findByProjectname(projectInfo.getProjectname()).get(0));
+                            uploadRepoService.save(upload);
+                            return new ResponseEntity(HttpStatus.OK);
                     }
-
-                } else {
-                    for (MultipartFile file : files) {
-                        upload.setImage(file.getBytes());
-                        upload.setName(projectInfo.getProjectname() + file.getOriginalFilename());
-                        upload.setUrl(ServletUriComponentsBuilder
-                                .fromCurrentContextPath()
-                                .path("/profile_api/v1/get/")
-                                .path(upload.getName())
-                                .toUriString());
-                        upload.setInfo(service.findByProjectname(projectInfo.getProjectname()).get(0));
-                        uploadRepoService.save(upload);
-                        return new ResponseEntity(HttpStatus.OK);
-                    }
-                }
-                return new ResponseEntity("Please Select Valid File", HttpStatus.INTERNAL_SERVER_ERROR);
-            } catch (IOException e) {
-                return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
+                } catch (IOException e) {
+                    return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
+                }             
             }
+            return new ResponseEntity("Please Select Valid File", HttpStatus.INTERNAL_SERVER_ERROR);
         } else
             return new ResponseEntity("kindly choose a file",
                     HttpStatus.EXPECTATION_FAILED);
