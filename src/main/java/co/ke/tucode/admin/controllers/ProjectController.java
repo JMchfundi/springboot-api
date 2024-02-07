@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,22 +59,22 @@ public class ProjectController {
         ProjectUpload upload = new ProjectUpload();
         ProjectInfo projectInfo = new ProjectInfo();
         if (!files.isEmpty()) {
-            for (MultipartFile file : files) {
-                try {    
-                    if (!service.existsByProjectname(projectInfo.getProjectname())) {
-                        projectInfo.setConstname(projectDataPayload.getConstname());
-                        projectInfo.setHousetype(projectDataPayload.getHousetype());
-                        projectInfo.setMap_keyword(projectDataPayload.getMap_keyword());
-                        projectInfo.setMap_location(projectDataPayload.getMap_location());
-                        projectInfo.setNumofunits(projectDataPayload.getNumofunits());
-                        projectInfo.setPrice(projectDataPayload.getPrice());
-                        projectInfo.setProjaddress(projectDataPayload.getProjaddress());
-                        projectInfo.setProjdescription(projectDataPayload.getProjdescription());
-                        projectInfo.setProjectname(projectDataPayload.getProjectname());
-                        projectInfo.setSizeinsqkm(projectDataPayload.getSizeinsqkm());
-                        projectInfo.setUser_signature(projectDataPayload.getUser_signature());
-                        service.save(projectInfo);
+            try {
+                projectInfo.setConstname(projectDataPayload.getConstname());
+                projectInfo.setHousetype(projectDataPayload.getHousetype());
+                projectInfo.setMap_keyword(projectDataPayload.getMap_keyword());
+                projectInfo.setMap_location(projectDataPayload.getMap_location());
+                projectInfo.setNumofunits(projectDataPayload.getNumofunits());
+                projectInfo.setPrice(projectDataPayload.getPrice());
+                projectInfo.setProjaddress(projectDataPayload.getProjaddress());
+                projectInfo.setProjdescription(projectDataPayload.getProjdescription());
+                projectInfo.setProjectname(projectDataPayload.getProjectname());
+                projectInfo.setSizeinsqkm(projectDataPayload.getSizeinsqkm());
+                projectInfo.setUser_signature(projectDataPayload.getUser_signature());
 
+                if (!service.existsByProjectname(projectInfo.getProjectname())) {
+                    service.save(projectInfo);
+                    for (MultipartFile file : files) {
                         upload.setImage(file.getBytes());
                         upload.setName(projectInfo.getProjectname() + file.getOriginalFilename());
                         upload.setUrl(ServletUriComponentsBuilder
@@ -83,24 +84,27 @@ public class ProjectController {
                                 .toUriString());
                         upload.setInfo(projectInfo);
                         uploadRepoService.save(upload);
-                        return new ResponseEntity(HttpStatus.OK);    
-                    } else {
-                            upload.setImage(file.getBytes());
-                            upload.setName(projectInfo.getProjectname() + file.getOriginalFilename());
-                            upload.setUrl(ServletUriComponentsBuilder
-                                    .fromCurrentContextPath()
-                                    .path("/profile_api/v1/get/")
-                                    .path(upload.getName())
-                                    .toUriString());
-                            upload.setInfo(service.findByProjectname(projectInfo.getProjectname()).get(0));
-                            uploadRepoService.save(upload);
-                            return new ResponseEntity(HttpStatus.OK);
+                        return new ResponseEntity(HttpStatus.OK);
                     }
-                } catch (IOException e) {
-                    return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
-                }             
+
+                } else {
+                    for (MultipartFile file : files) {
+                        upload.setImage(file.getBytes());
+                        upload.setName(projectInfo.getProjectname() + file.getOriginalFilename());
+                        upload.setUrl(ServletUriComponentsBuilder
+                                .fromCurrentContextPath()
+                                .path("/profile_api/v1/get/")
+                                .path(upload.getName())
+                                .toUriString());
+                        upload.setInfo(service.findByProjectname(projectInfo.getProjectname()).get(0));
+                        uploadRepoService.save(upload);
+                        return new ResponseEntity(HttpStatus.OK);
+                    }
+                }
+                return new ResponseEntity("Please Select Valid File", HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (IOException e) {
+                return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
             }
-            return new ResponseEntity("Please Select Valid File", HttpStatus.INTERNAL_SERVER_ERROR);
         } else
             return new ResponseEntity("kindly choose a file",
                     HttpStatus.EXPECTATION_FAILED);
@@ -124,8 +128,8 @@ public class ProjectController {
      * .......................get_by_name 
      * for data display to the interface
      */
-    @RequestMapping(value = "/get_by_name", method = RequestMethod.GET)
-    public ResponseEntity<?> get_user(@RequestParam(name = "projectName") String projectName) {
+    @RequestMapping(value = "/get_by_name/{name}", method = RequestMethod.GET)
+    public ResponseEntity<?> get_user(@PathVariable String projectName) {
         List<ProjectInfo> projectInfos = service.findByProjectname(projectName);
 
         if (projectInfos.isEmpty())
