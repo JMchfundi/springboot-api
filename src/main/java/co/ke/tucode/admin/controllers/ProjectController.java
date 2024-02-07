@@ -93,7 +93,7 @@ public class ProjectController {
                                     .path("/profile_api/v1/get/")
                                     .path(upload.getName())
                                     .toUriString());
-                            upload.setInfo(service.findByProjectname(projectInfo.getProjectname()).get(0));
+                            upload.setInfo(service.findByProjectname(projectDataPayload.getProjectname()).get(0));
                             uploadRepoService.save(upload);
                             return new ResponseEntity(HttpStatus.OK);
                     }
