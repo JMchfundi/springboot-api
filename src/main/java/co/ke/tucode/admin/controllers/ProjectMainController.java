@@ -62,7 +62,7 @@ public class ProjectMainController {
             for (MultipartFile file : files) {
                 try {    
                     if (!service.existsByProjectname(projectDataPayload.getProjectname())) {
-                        mainData.setProjectname(projectDataPayload.getConstname());
+                        mainData.setProjectname(projectDataPayload.getProjectname());
                         mainData.setUser_signature(projectDataPayload.getUser_signature());
     
                         service.save(mainData);
