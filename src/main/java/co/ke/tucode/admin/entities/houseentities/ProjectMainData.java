@@ -49,8 +49,8 @@ public class ProjectMainData {
     private String[] facilities;
 
     @Lob
-    @Column(name = "desc")
-    private String desc;
+    @Column(name = "descr")
+    private String descr;
 
     @OneToMany(mappedBy = "mainData", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProjectMainUpload> img;

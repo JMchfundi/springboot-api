@@ -32,7 +32,7 @@ public class ProjectLocationCordinatesData {
     private String longitude;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_main_data_id", nullable = false)
+    @JoinColumn(name = "project_location_data_id", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ProjectLocationData locationData;
 }
