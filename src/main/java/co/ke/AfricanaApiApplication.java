@@ -21,7 +21,8 @@ public class AfricanaApiApplication {
 				registry.addMapping("/**")
 						.allowedOrigins(
 								"http://localhost:3000",
-								"https://www.housing.tucode.co.ke");
+								"https://www.housing.tucode.co.ke",
+								"https://capdo.org");
 				// registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
 			}
 		};
