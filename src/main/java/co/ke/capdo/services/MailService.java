@@ -1,8 +1,8 @@
 package co.ke.capdo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import co.ke.capdo.beans.Mail;
@@ -11,7 +11,7 @@ import co.ke.capdo.beans.Mail;
 public class MailService {
 
     @Autowired
-    private JavaMailSender mailSender;
+    private MailSender mailSender;
 
     public void sendMail (final Mail mail) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();

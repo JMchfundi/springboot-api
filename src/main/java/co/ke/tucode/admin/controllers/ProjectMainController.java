@@ -25,16 +25,28 @@ import org.springframework.web.util.UriComponentsBuilder;
 import co.ke.tucode.admin.entities.ProjectInfo;
 import co.ke.tucode.admin.entities.ProjectLocation;
 import co.ke.tucode.admin.entities.ProjectUpload;
+import co.ke.tucode.admin.entities.houseentities.ProjectLocationCordinatesData;
+import co.ke.tucode.admin.entities.houseentities.ProjectLocationData;
+import co.ke.tucode.admin.entities.houseentities.ProjectLocationPricingData;
+import co.ke.tucode.admin.entities.houseentities.ProjectLocationPricingData2;
 import co.ke.tucode.admin.entities.houseentities.ProjectMainData;
 import co.ke.tucode.admin.entities.houseentities.ProjectMainUpload;
+import co.ke.tucode.admin.entities.houseentities.ProjectPricingData;
+import co.ke.tucode.admin.entities.houseentities.ProjectRatingData;
 import co.ke.tucode.admin.payloads.ProjectDataPayload;
 import co.ke.tucode.admin.payloads.ProjectLocationPayload;
 import co.ke.tucode.admin.payloads.ProjectUploadPayload;
 import co.ke.tucode.admin.repositories.ProjectInfoRepo;
 import co.ke.tucode.admin.repositories.ProjectLocationRepo;
 import co.ke.tucode.admin.repositories.ProjectUploadRepo;
+import co.ke.tucode.admin.repositories.houserepos.ProjectLocationCordinatesDataRepo;
+import co.ke.tucode.admin.repositories.houserepos.ProjectLocationDataRepo;
+import co.ke.tucode.admin.repositories.houserepos.ProjectLocationPricingData2Repo;
+import co.ke.tucode.admin.repositories.houserepos.ProjectLocationPricingDataRepo;
 import co.ke.tucode.admin.repositories.houserepos.ProjectMainDataRepo;
 import co.ke.tucode.admin.repositories.houserepos.ProjectMainUploadRepo;
+import co.ke.tucode.admin.repositories.houserepos.ProjectPricingDataRepo;
+import co.ke.tucode.admin.repositories.houserepos.ProjectRatingDataRepo;
 import co.ke.tucode.admin.services.ProjectInfoService;
 import co.ke.tucode.buyer.entities.Africana_User;
 import co.ke.tucode.buyer.entities.DocUpload;
@@ -47,7 +59,18 @@ public class ProjectMainController {
     private ProjectMainDataRepo service;
     @Autowired
     private ProjectMainUploadRepo uploadRepoService;
-    
+    @Autowired
+    private ProjectLocationDataRepo locationDataRepo;
+    @Autowired
+    private ProjectLocationCordinatesDataRepo locationCordinatesDataRepo;
+    @Autowired
+    private ProjectPricingDataRepo pricingDataRepo;
+    @Autowired
+    private ProjectLocationPricingDataRepo locationPricingDataRepo;
+    @Autowired
+    private ProjectLocationPricingData2Repo locationPricingData2Repo;
+    @Autowired
+    private ProjectRatingDataRepo ratingDataRepo;
     /*
      * .......................obr_put_file upload db
      * data.............................
@@ -58,39 +81,62 @@ public class ProjectMainController {
             @RequestPart List<MultipartFile> files) {
         ProjectMainUpload mainUpload = new ProjectMainUpload();
         ProjectMainData mainData = new ProjectMainData();
+        ProjectLocationData locationData = new ProjectLocationData();
+        ProjectLocationCordinatesData locationCordinatesData = new ProjectLocationCordinatesData();
+        ProjectPricingData pricingData = new ProjectPricingData();
+        ProjectLocationPricingData locationPricingData = new ProjectLocationPricingData();
+        ProjectLocationPricingData2 locationPricingData2 = new ProjectLocationPricingData2();
+        ProjectRatingData ratingData = new ProjectRatingData();
+
         if (!files.isEmpty()) {
             for (MultipartFile file : files) {
-                try {    
+                try {
                     if (!service.existsByProjectname(projectDataPayload.getProjectname())) {
                         mainData.setProjectname(projectDataPayload.getProjectname());
                         mainData.setUser_signature(projectDataPayload.getUser_signature());
-    
+
                         service.save(mainData);
-                            mainUpload.setImage(file.getBytes());
-                            mainUpload.setName(projectDataPayload.getProjectname() + file.getOriginalFilename());
-                            mainUpload.setUrl(ServletUriComponentsBuilder
-                                    .fromCurrentContextPath()
-                                    .path("/profile_api/v1/get/")
-                                    .path(mainUpload.getName())
-                                    .toUriString());
-                            mainUpload.setMainData(mainData);
-                            uploadRepoService.save(mainUpload);
-                            return new ResponseEntity(HttpStatus.OK);
+                        
+                        locationData.setMainData(mainData);
+                        locationDataRepo.save(locationData);
+                        locationCordinatesData.setLocationData(locationData);
+                        locationCordinatesDataRepo.save(locationCordinatesData);
+
+                        pricingData.setMainData(mainData);
+                        pricingDataRepo.save(pricingData);
+                        locationPricingData.setPricingData(pricingData);
+                        locationPricingDataRepo.save(locationPricingData);
+                        locationPricingData2.setPricingData(pricingData);
+                        locationPricingData2Repo.save(locationPricingData2);
+
+                        ratingData.setMainData(mainData);
+                        ratingDataRepo.save(ratingData);
+
+                        mainUpload.setImage(file.getBytes());
+                        mainUpload.setName(projectDataPayload.getProjectname() + file.getOriginalFilename());
+                        mainUpload.setUrl(ServletUriComponentsBuilder
+                                .fromCurrentContextPath()
+                                .path("/profile_api/v1/get/")
+                                .path(mainUpload.getName())
+                                .toUriString());
+                        mainUpload.setMainData(mainData);
+                        uploadRepoService.save(mainUpload);
+                        return new ResponseEntity(HttpStatus.OK);
                     } else {
-                            mainUpload.setImage(file.getBytes());
-                            mainUpload.setName(projectDataPayload.getProjectname() + file.getOriginalFilename());
-                            mainUpload.setUrl(ServletUriComponentsBuilder
-                                    .fromCurrentContextPath()
-                                    .path("/profile_api/v1/get/")
-                                    .path(mainUpload.getName())
-                                    .toUriString());
-                            mainUpload.setMainData(service.findByProjectname(projectDataPayload.getProjectname()).get(0));
-                            uploadRepoService.save(mainUpload);
-                            return new ResponseEntity(HttpStatus.OK);
+                        mainUpload.setImage(file.getBytes());
+                        mainUpload.setName(projectDataPayload.getProjectname() + file.getOriginalFilename());
+                        mainUpload.setUrl(ServletUriComponentsBuilder
+                                .fromCurrentContextPath()
+                                .path("/profile_api/v1/get/")
+                                .path(mainUpload.getName())
+                                .toUriString());
+                        mainUpload.setMainData(service.findByProjectname(projectDataPayload.getProjectname()).get(0));
+                        uploadRepoService.save(mainUpload);
+                        return new ResponseEntity(HttpStatus.OK);
                     }
                 } catch (IOException e) {
                     return new ResponseEntity(e, HttpStatus.EXPECTATION_FAILED);
-                }                    
+                }
             }
             return new ResponseEntity("Please Select Valid File", HttpStatus.INTERNAL_SERVER_ERROR);
         } else
@@ -112,8 +158,8 @@ public class ProjectMainController {
         return new ResponseEntity(mainDatas, HttpStatus.OK);
     }
 
-        /*
-     * .......................get_by_name 
+    /*
+     * .......................get_by_name
      * for data display to the interface
      */
     @RequestMapping(value = "/get_by_name", method = RequestMethod.GET)
