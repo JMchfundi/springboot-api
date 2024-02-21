@@ -116,26 +116,26 @@ public class ProfileUploadController {
 
     }
 
-    @GetMapping(value = "/get/{name}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> getFile(@PathVariable String name) {
-        List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentDispositionFormData(docUpload.get(0).getName(), docUpload.get(0).getName());
-        // headers.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(docUpload.get(0).getFile());
-    }
-
-    // @GetMapping("/get/{name}")
+    // @GetMapping(value = "/get/{name}", produces = MediaType.APPLICATION_PDF_VALUE)
     // public ResponseEntity<byte[]> getFile(@PathVariable String name) {
-    // List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
+    //     List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
 
-    // return ResponseEntity.ok()
-    // .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-    // docUpload.get(0).getName() + "\"")
-    // .body(docUpload.get(0).getFile());
+    //     HttpHeaders headers = new HttpHeaders();
+    //     headers.setContentDispositionFormData(docUpload.get(0).getName(), docUpload.get(0).getName());
+    //     // headers.setContentType(MediaType.APPLICATION_PDF_VALUE);
+    //     headers.setContentType(MediaType.APPLICATION_PDF);
+    //     return ResponseEntity.ok()
+    //             .headers(headers)
+    //             .body(docUpload.get(0).getFile());
     // }
+
+    @GetMapping("/get/{name}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String name) {
+    List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
+
+    return ResponseEntity.ok()
+    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+    docUpload.get(0).getName() + "\"")
+    .body(docUpload.get(0).getFile());
+    }
 }
