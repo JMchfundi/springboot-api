@@ -119,7 +119,7 @@ public class ProjectMainController {
                         mainUpload.setName(projectDataPayload.getProjectname() + file.getOriginalFilename());
                         mainUpload.setUrl(ServletUriComponentsBuilder
                                 .fromCurrentContextPath()
-                                .path("/profile_api/v1/get/")
+                                .path("/project_api/v1/house/get/")
                                 .path(mainUpload.getName())
                                 .toUriString());
                         mainUpload.setMainData(mainData);
@@ -130,7 +130,7 @@ public class ProjectMainController {
                         mainUpload.setName(projectDataPayload.getProjectname() + file.getOriginalFilename());
                         mainUpload.setUrl(ServletUriComponentsBuilder
                                 .fromCurrentContextPath()
-                                .path("/profile_api/v1/get/")
+                                .path("/project_api/v1/house/get/")
                                 .path(mainUpload.getName())
                                 .toUriString());
                         mainUpload.setMainData(service.findByProjectname(projectDataPayload.getProjectname()).get(0));
