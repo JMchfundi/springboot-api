@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.core.io.Resource;
@@ -129,13 +130,24 @@ public class ProfileUploadController {
     //             .body(docUpload.get(0).getFile());
     // }
 
+    // @GetMapping(path = "/get/{name}", produces = mediatype.image_jpeg_value)
+    // public ResponseEntity<byte[]> getimage() throws ioexception {
+    //     inputstream in = getclass().getresourceasstream("image.jpg");
+    //     return ioutils.tobytearray(in);
+    // }
+
     @GetMapping("/get/{name}")
     public ResponseEntity<byte[]> getFile(@PathVariable String name) {
     List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
 
-    return ResponseEntity.ok()
-    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-    docUpload.get(0).getName() + "\"")
-    .body(docUpload.get(0).getFile());
+    byte[] imageBytes = Base64.getDecoder().decode(docUpload.get(0).getFile());
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.IMAGE_JPEG);
+    return new ResponseEntity<> (imageBytes, headers, HttpStatus.OK);
+
+    // return ResponseEntity.ok()
+    // .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+    // docUpload.get(0).getName() + "\"")
+    // .body(docUpload.get(0).getFile());
     }
 }
