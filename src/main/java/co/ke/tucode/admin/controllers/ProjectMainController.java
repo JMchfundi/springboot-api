@@ -1,15 +1,18 @@
 package co.ke.tucode.admin.controllers;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -156,6 +159,17 @@ public class ProjectMainController {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
 
         return new ResponseEntity(mainDatas, HttpStatus.OK);
+    }
+
+
+        @GetMapping("/get/{name}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String name) {
+    List<ProjectMainUpload> mainUploads = uploadRepoService.findByName(name);
+
+    byte[] imageBytes = Base64.getDecoder().decode(mainUploads.get(0).getImage());
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.IMAGE_JPEG);
+    return new ResponseEntity<> (imageBytes, headers, HttpStatus.OK);
     }
 
     /*
