@@ -74,6 +74,7 @@ public class ProjectMainController {
     private ProjectLocationPricingData2Repo locationPricingData2Repo;
     @Autowired
     private ProjectRatingDataRepo ratingDataRepo;
+
     /*
      * .......................obr_put_file upload db
      * data.............................
@@ -99,7 +100,7 @@ public class ProjectMainController {
                         mainData.setUser_signature(projectDataPayload.getUser_signature());
 
                         service.save(mainData);
-                        
+
                         locationData.setMainData(mainData);
                         locationDataRepo.save(locationData);
                         locationCordinatesData.setLocationData(locationData);
@@ -161,15 +162,14 @@ public class ProjectMainController {
         return new ResponseEntity(mainDatas, HttpStatus.OK);
     }
 
-
-        @GetMapping("/get/{name}")
+    @GetMapping("/get/{name}")
     public ResponseEntity<byte[]> getFile(@PathVariable String name) {
-    List<ProjectMainUpload> mainUploads = uploadRepoService.findByName(name);
+        List<ProjectMainUpload> mainUploads = uploadRepoService.findByName(name);
 
-    return ResponseEntity.ok()
-    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-    mainUploads.get(0).getName() + "\"")
-    .body(mainUploads.get(0).getImage());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+                        mainUploads.get(0).getName() + "\"")
+                .body(mainUploads.get(0).getImage());
     }
 
     /*
