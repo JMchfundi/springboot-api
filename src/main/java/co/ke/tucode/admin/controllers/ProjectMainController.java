@@ -166,10 +166,10 @@ public class ProjectMainController {
     public ResponseEntity<byte[]> getFile(@PathVariable String name) {
     List<ProjectMainUpload> mainUploads = uploadRepoService.findByName(name);
 
-    byte[] imageBytes = Base64.getDecoder().decode(mainUploads.get(0).getImage());
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.IMAGE_JPEG);
-    return new ResponseEntity<> (imageBytes, headers, HttpStatus.OK);
+    return ResponseEntity.ok()
+    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+    mainUploads.get(0).getName() + "\"")
+    .body(mainUploads.get(0).getImage());
     }
 
     /*
