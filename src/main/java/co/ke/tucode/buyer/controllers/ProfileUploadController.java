@@ -140,14 +140,14 @@ public class ProfileUploadController {
     public ResponseEntity<byte[]> getFile(@PathVariable String name) {
     List<ProfileUpload> docUpload = profileUploadRepository.findByName(name);
 
-    byte[] imageBytes = Base64.getDecoder().decode(docUpload.get(0).getFile());
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.IMAGE_JPEG);
-    return new ResponseEntity<> (imageBytes, headers, HttpStatus.OK);
+    // byte[] imageBytes = Base64.getDecoder().decode(docUpload.get(0).getFile());
+    // HttpHeaders headers = new HttpHeaders();
+    // headers.setContentType(MediaType.IMAGE_JPEG);
+    // return new ResponseEntity<> (imageBytes, headers, HttpStatus.OK);
 
-    // return ResponseEntity.ok()
-    // .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-    // docUpload.get(0).getName() + "\"")
-    // .body(docUpload.get(0).getFile());
+    return ResponseEntity.ok()
+    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
+    docUpload.get(0).getName() + "\"")
+    .body(docUpload.get(0).getFile());
     }
 }
