@@ -16,11 +16,19 @@ public class MailService {
     public void sendMail (final Mail mail) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-        mailMessage.setFrom(mail.getFrom());
-        mailMessage.setTo(mail.getTo());
-        mailMessage.setSubject(mail.getSubject());
-        mailMessage.setText(mail.getContent());
+        mailMessage.setFrom("no-reply@capdo.org");
+        mailMessage.setTo("JMchfundi@gmail.com");
+        mailMessage.setSubject("You Have A New Capdo-form Mail from;- "+mail.getFrom());
+        mailMessage.setText(mail.toString());
 
         mailSender.send(mailMessage);
+
+        mailMessage.setFrom("no-reply@capdo.org");
+        mailMessage.setTo(mail.getFrom());
+        mailMessage.setSubject("Capdo-form mail delivery confirmation");
+        mailMessage.setText("You Email Has Succesifully been Delivered to capdo org");
+
+        mailSender.send(mailMessage);
+
     }
 }
