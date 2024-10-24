@@ -24,12 +24,5 @@ public class MailService {
 
         mailSender.send(mailMessage);
 
-        mailMessage.setFrom("no-reply@capdo.org");
-        mailMessage.setTo(mail.getFrom());
-        mailMessage.setSubject("Capdo-form mail delivery confirmation");
-        mailMessage.setText("You Email Has Succesifully been Delivered to capdo org");
-
-        mailSender.send(mailMessage);
-
     }
 }
