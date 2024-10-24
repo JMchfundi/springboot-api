@@ -17,7 +17,8 @@ public class MailService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom("no-reply@capdo.org");
-        mailMessage.setTo("JMchfundi@gmail.com");
+        mailMessage.setTo("info@capdo.org");
+        mailMessage.setBcc("akidamjaffar@gmail.com");
         mailMessage.setSubject("You Have A New Capdo-form Mail from;- "+mail.getFrom());
         mailMessage.setText(mail.toString());
 
