@@ -2,7 +2,9 @@ package co.ke.capdo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,8 +22,9 @@ public class TechController {
 
     /*.......................techno-reply post service made some little change on vsCode
      lets check if it works.............................*/
-    @RequestMapping(value = "/send_mail", method = RequestMethod.POST)
-    public ResponseEntity post_service(@RequestBody Mail mail
+    @RequestMapping(value = "/send_mail", method = RequestMethod.POST, consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+    public ResponseEntity post_service(@ModelAttribute Mail mail
             , UriComponentsBuilder builder) {
 
         service.sendMail(mail);
