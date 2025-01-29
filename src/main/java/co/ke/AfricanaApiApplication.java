@@ -20,9 +20,9 @@ public class AfricanaApiApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedOrigins(
-								"http://localhost:3000",
-								"https://www.housing.tucode.co.ke",
-								"https://www.capdo.org");
+								// "http://localhost:3000",
+								"https://www.boreshamaisha.tucode.co.ke");
+								// "https://www.capdo.org");
 				// registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
 			}
 		};
