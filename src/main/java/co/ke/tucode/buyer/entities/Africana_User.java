@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import co.ke.tucode.buyer.entities.UserRole;
 
 @Entity
 @Getter
@@ -74,4 +75,10 @@ public class Africana_User{
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ownership_PrefferenceID")
     private Ownership_Prefference ownership_Prefference;
+
+    @Column(unique = true, insertable = false, updatable = false)
+    private Integer role_ID;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role_ID")
+    private UserRole userRole;
 }
