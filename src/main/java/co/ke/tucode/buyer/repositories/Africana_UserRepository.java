@@ -9,5 +9,6 @@ import co.ke.tucode.buyer.entities.Africana_User;
 public interface Africana_UserRepository extends JpaRepository<Africana_User, Integer> {
     public List<Africana_User> findByEmail(String email);
     public boolean existsByEmail(String email); 
-    public void deleteByEmail(String email);    
+    public void deleteByEmail(String email);  
+    List<Africana_User> findByUsername(String username);
 }
