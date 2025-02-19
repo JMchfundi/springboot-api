@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import co.ke.tucode.admin.entities.ProjectInfo;
 import co.ke.tucode.admin.repositories.ProjectInfoRepo;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 @Service

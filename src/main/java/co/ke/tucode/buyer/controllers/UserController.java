@@ -35,8 +35,8 @@ import co.ke.tucode.buyer.repositories.Personal_InfoRepository;
 import co.ke.tucode.buyer.services.Africana_UserService;
 //import co.ke.tucode.africana_api.services.FilePreview;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Path;

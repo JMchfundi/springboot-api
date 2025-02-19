@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import co.ke.tucode.buyer.entities.Africana_User;
 import co.ke.tucode.buyer.repositories.Africana_UserRepository;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

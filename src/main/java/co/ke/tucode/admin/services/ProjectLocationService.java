@@ -8,7 +8,7 @@ import co.ke.tucode.admin.entities.ProjectLocation;
 import co.ke.tucode.admin.repositories.ProjectInfoRepo;
 import co.ke.tucode.admin.repositories.ProjectLocationRepo;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
