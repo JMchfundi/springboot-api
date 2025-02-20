@@ -1,7 +1,9 @@
 package co.ke.tucode.buyer.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import co.ke.tucode.buyer.repositories.UserRoleRepository;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -12,7 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import co.ke.tucode.buyer.entities.UserRole;
 
 @Entity
 @Getter
@@ -81,4 +82,13 @@ public class Africana_User{
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_ID")
     private UserRole userRole;
+
+    // @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // @JoinTable(name = "USER_ROLES",
+    //         joinColumns = {
+    //         @JoinColumn(name = "email")
+    //         },
+    //         inverseJoinColumns = {
+    //         @JoinColumn(name = "user_mail") })
+    // private Set<UserRole> userRoles;
 }

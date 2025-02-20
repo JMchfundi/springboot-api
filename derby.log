@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Thu Feb 20 11:44:23 EAT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-0195-2287-7ee8-000000e0fea0 
-on database directory C:\Users\Jakida\Downloads\africana_api-master\mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@33909752 
-Loaded from file:/C:/Users/Jakida/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
-java.vendor=Oracle Corporation
-java.runtime.version=21+35-LTS-2513
-user.dir=C:\Users\Jakida\Downloads\africana_api-master
-os.name=Windows 11
+Thu Feb 20 23:11:49 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-0195-24fc-e8ad-0000039a7ad8 
+on database directory /home/kali/Downloads/africana_api-master/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@639fee48 
+Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
+java.vendor=Debian
+java.runtime.version=21.0.5+11-Debian-1
+user.dir=/home/kali/Downloads/africana_api-master
+os.name=Linux
 os.arch=amd64
-os.version=10.0
+os.version=6.1.0-kali9-amd64
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

@@ -10,5 +10,5 @@ public interface Africana_UserRepository extends JpaRepository<Africana_User, In
     public List<Africana_User> findByEmail(String email);
     public boolean existsByEmail(String email); 
     public void deleteByEmail(String email);  
-    public List<Africana_User> findByUsername(String username);
+    // public List<Africana_User> findByUsername(String username);
 }

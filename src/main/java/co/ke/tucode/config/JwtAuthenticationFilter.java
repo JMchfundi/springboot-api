@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import co.ke.tucode.buyer.services.Africana_UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public String TOKEN_PREFIX;
 
     // @Resource(name = "userService")
-    private UserDetailsService userDetailsService;
+    @Autowired
+    private Africana_UserService userDetailsService;
 
     @Autowired
     private TokenProvider jwtTokenUtil;

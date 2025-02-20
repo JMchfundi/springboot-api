@@ -1,6 +1,7 @@
 package co.ke.tucode.buyer.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,7 +71,14 @@ public class Africana_UserService implements UserDetailsService {
         if (users.isEmpty()) {
             throw new UsernameNotFoundException(username+ " doesn't exist");
         }
-        Africana_User user = users.get(0);
-        return new User(user.getEmail(), user.getPassword(), null);
+        
+        return new User(users.get(0).getEmail(), users.get(0).getPassword(), getAuthority(users.get(0)));
     }
+
+        // Get user authorities
+        private Set<SimpleGrantedAuthority> getAuthority(Africana_User user) {
+            Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().getRole_name()));
+            return authorities;
+        }
 }

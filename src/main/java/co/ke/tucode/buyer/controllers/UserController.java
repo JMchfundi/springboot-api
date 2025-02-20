@@ -34,9 +34,10 @@ import co.ke.tucode.buyer.repositories.Family_ResidenceRepository;
 import co.ke.tucode.buyer.repositories.Next_Of_KinRepository;
 import co.ke.tucode.buyer.repositories.Ownership_PrefferenceRepository;
 import co.ke.tucode.buyer.repositories.Personal_InfoRepository;
+import co.ke.tucode.buyer.repositories.UserRoleRepository;
 import co.ke.tucode.buyer.services.Africana_UserService;
 //import co.ke.tucode.africana_api.services.FilePreview;
-
+import co.ke.tucode.config.TokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.*;
@@ -45,6 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -73,7 +75,7 @@ public class UserController {
     private Ownership_PrefferenceRepository ownership_PrefferenceRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private TokenProvider tokenProvider;
 
     /*
      * @RequestMapping("/")
@@ -134,8 +136,13 @@ public class UserController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
         else {
-            if (request.getPassword().equals(user.get(0).getPassword()))
-                return new ResponseEntity(user.get(0), HttpStatus.OK);
+            if (request.getPassword().equals(user.get(0).getPassword())) {
+                // return new ResponseEntity(tokenProvider.generateJwtToken(
+                        // service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
+
+                        return new ResponseEntity(user.get(0), HttpStatus.OK);
+    
+            }
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -163,7 +170,7 @@ public class UserController {
             user.setEmployment_Details(
                     new Employment_Details(null, null, null, null, null, null, null, null, user.getUser_signature()));
             user.setOwnership_Prefference(new Ownership_Prefference(null, null, null, null, user.getUser_signature()));
-            user.setUserRole(new UserRole(null,"Buyer","Buyer Access Rights", user.getEmail()));
+            user.setUserRole(new UserRole(null,"Buyer", "Buyer's Right",user.getEmail()));
             service.save(user);
             return new ResponseEntity(user, HttpStatus.CREATED);
         }

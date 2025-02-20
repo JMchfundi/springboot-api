@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -66,6 +68,18 @@ public class TokenProvider implements Serializable {
                 .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
                 .compact();
     }
+
+  public String generateJwtToken(UserDetails userDetails) { 
+      Map<String, Object> claims = new HashMap<>();
+
+      return Jwts.builder()
+         .setClaims(claims)  // set the claims
+         .setSubject(userDetails.getUsername())  // set the username as subject in payload
+         .setIssuedAt(new Date(System.currentTimeMillis()))
+         .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
+         .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)  // signature part
+         .compact();
+   }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
