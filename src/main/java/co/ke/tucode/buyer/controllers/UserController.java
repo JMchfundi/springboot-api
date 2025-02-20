@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,6 +21,7 @@ import co.ke.tucode.buyer.entities.Family_Residence;
 import co.ke.tucode.buyer.entities.Next_Of_Kin;
 import co.ke.tucode.buyer.entities.Ownership_Prefference;
 import co.ke.tucode.buyer.entities.Personal_Info;
+import co.ke.tucode.buyer.entities.UserRole;
 import co.ke.tucode.buyer.payloads.CitizenCategoryPayload;
 import co.ke.tucode.buyer.payloads.Family_ResidencePayload;
 import co.ke.tucode.buyer.payloads.LoginRequest;
@@ -69,6 +71,9 @@ public class UserController {
 
     @Autowired
     private Ownership_PrefferenceRepository ownership_PrefferenceRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /*
      * @RequestMapping("/")
@@ -148,6 +153,7 @@ public class UserController {
             return new ResponseEntity(null, HttpStatus.CONFLICT);
 
         else {
+            // user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setAccess("Buyer");
             user.setCitizenCategory(new CitizenCategory(null, null, null, null, user.getUser_signature()));
             user.setPersonal_Info(new Personal_Info(null, null, null, null, null, null, null, null, null, null,
@@ -157,6 +163,7 @@ public class UserController {
             user.setEmployment_Details(
                     new Employment_Details(null, null, null, null, null, null, null, null, user.getUser_signature()));
             user.setOwnership_Prefference(new Ownership_Prefference(null, null, null, null, user.getUser_signature()));
+            user.setUserRole(new UserRole(null,"Buyer","Buyer Access Rights", user.getEmail()));
             service.save(user);
             return new ResponseEntity(user, HttpStatus.CREATED);
         }
