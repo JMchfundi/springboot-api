@@ -78,7 +78,7 @@ public class Africana_UserService implements UserDetailsService {
         // Get user authorities
         private Set<SimpleGrantedAuthority> getAuthority(Africana_User user) {
             Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().getRole_name()));
+                authorities.add(new SimpleGrantedAuthority("Buyer"));
             return authorities;
         }
 }
