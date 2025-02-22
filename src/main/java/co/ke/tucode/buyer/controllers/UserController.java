@@ -40,7 +40,7 @@ import co.ke.tucode.buyer.repositories.Ownership_PrefferenceRepository;
 import co.ke.tucode.buyer.repositories.Personal_InfoRepository;
 import co.ke.tucode.buyer.repositories.UserRoleRepository;
 import co.ke.tucode.buyer.services.Africana_UserService;
-import co.ke.tucode.config.JwtAuthenticationFilter;
+import co.ke.tucode.configjwt.JwtAuthenticationFilter;
 //import co.ke.tucode.africana_api.services.FilePreview;
 import co.ke.tucode.configjwt.TokenProviderTuCode;
 import jakarta.servlet.http.HttpServletResponse;
@@ -141,7 +141,6 @@ public class UserController {
      */
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
-        
         
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));

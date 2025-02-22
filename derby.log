@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Sat Feb 22 15:28:43 EAT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-0195-2da1-a365-0000014806d0 
+Sat Feb 22 20:27:16 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-0195-2eb2-f7bf-000001b9ec20 
 on database directory /home/kali/Downloads/africana_api-master-2/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@639fee48 
 Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
 java.vendor=Debian

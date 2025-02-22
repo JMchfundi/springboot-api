@@ -31,15 +31,15 @@ public class Africana_UserService implements UserDetailsService {
     @Autowired
     private Africana_UserRepository repository;
 
-    public void save(Africana_User certificate){
+    public void save(Africana_User certificate) {
         repository.save(certificate);
     }
 
-    public List<Africana_User> findAll(){
+    public List<Africana_User> findAll() {
         return repository.findAll();
     }
 
-    public void update(Africana_User certificate){
+    public void update(Africana_User certificate) {
         repository.save(certificate);
     }
 
@@ -47,11 +47,11 @@ public class Africana_UserService implements UserDetailsService {
         repository.deleteByEmail(email);
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         repository.deleteAll();
     }
 
-    public List<Africana_User> findByEmail(String email){
+    public List<Africana_User> findByEmail(String email) {
         return repository.findByEmail(email);
     }
 
@@ -69,16 +69,25 @@ public class Africana_UserService implements UserDetailsService {
         List<Africana_User> users = repository.findByEmail(username);
 
         if (users.isEmpty()) {
-            throw new UsernameNotFoundException(username+ " doesn't exist");
+            throw new UsernameNotFoundException(username + " doesn't exist");
         }
-        
-        return new User(users.get(0).getEmail(), users.get(0).getPassword(), getAuthority(users.get(0)));
+
+        return new User(users.get(0).getEmail(), users.get(0).getPassword(), users.get(0).getAuthorities());
     }
 
-        // Get user authorities
-        private Set<SimpleGrantedAuthority> getAuthority(Africana_User user) {
-            Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-                authorities.add(new SimpleGrantedAuthority("Buyer"));
-            return authorities;
-        }
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                // TODO Auto-generated method stub
+                List<Africana_User> users = repository.findByEmail(username);
+
+                if (users.isEmpty()) {
+                    throw new UsernameNotFoundException(username + " doesn't exist");
+                }
+
+                return new User(users.get(0).getEmail(), users.get(0).getPassword(),  users.get(0).getAuthorities());
+            }
+        };
+    }
 }
