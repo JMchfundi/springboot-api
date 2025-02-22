@@ -7,6 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,6 +83,9 @@ public class UserController {
 
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     /*
      * @RequestMapping("/")
      * public String root(Model model){
@@ -134,6 +139,9 @@ public class UserController {
      */
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
         List<Africana_User> user = service.findByEmail(request.getEmail());
 
         if (user.isEmpty())
@@ -142,10 +150,10 @@ public class UserController {
         else {
             if (request.getPassword().equals(user.get(0).getPassword())) {
                 // return new ResponseEntity(tokenProviderTuCode.generateToken(
-                        // service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
+                // service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
 
-                        return new ResponseEntity(user.get(0), HttpStatus.OK);
-    
+                return new ResponseEntity(user.get(0), HttpStatus.OK);
+
             }
 
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -178,7 +186,8 @@ public class UserController {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             service.save(user);
 
-            // tokenProviderTuCode.generateToken(user);
+            // return new ResponseEntity(tokenProviderTuCode.generateToken(
+            // service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
 
             return new ResponseEntity(user, HttpStatus.CREATED);
         }

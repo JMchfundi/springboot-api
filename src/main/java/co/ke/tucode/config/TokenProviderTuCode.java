@@ -25,7 +25,6 @@ public class TokenProviderTuCode {
         return extractClaim(token, Claims::getSubject);
     }
 
-    
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
