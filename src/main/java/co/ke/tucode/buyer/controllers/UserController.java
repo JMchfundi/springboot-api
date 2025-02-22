@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,6 +82,7 @@ public class UserController {
     @Autowired
     private TokenProviderTuCode tokenProviderTuCode;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -139,6 +141,8 @@ public class UserController {
      */
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
+        
+        
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -148,11 +152,11 @@ public class UserController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
         else {
-            if (request.getPassword().equals(user.get(0).getPassword())) {
-                // return new ResponseEntity(tokenProviderTuCode.generateToken(
-                // service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
+            if (passwordEncoder.matches(request.getPassword(), user.get(0).getPassword())            ) {
+                return new ResponseEntity(tokenProviderTuCode.generateToken(
+                service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
 
-                return new ResponseEntity(user.get(0), HttpStatus.OK);
+                // return new ResponseEntity(user.get(0), HttpStatus.OK);
 
             }
 
