@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import co.ke.tucode.buyer.entities.Africana_User;
+import co.ke.tucode.buyer.entities.Role;
 import co.ke.tucode.buyer.entities.CitizenCategory;
 import co.ke.tucode.buyer.entities.DocUpload;
 import co.ke.tucode.buyer.entities.Employment_Details;
@@ -36,8 +37,9 @@ import co.ke.tucode.buyer.repositories.Ownership_PrefferenceRepository;
 import co.ke.tucode.buyer.repositories.Personal_InfoRepository;
 import co.ke.tucode.buyer.repositories.UserRoleRepository;
 import co.ke.tucode.buyer.services.Africana_UserService;
+import co.ke.tucode.config.JwtAuthenticationFilter;
 //import co.ke.tucode.africana_api.services.FilePreview;
-import co.ke.tucode.config.TokenProvider;
+import co.ke.tucode.configjwt.TokenProviderTuCode;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.*;
@@ -75,7 +77,9 @@ public class UserController {
     private Ownership_PrefferenceRepository ownership_PrefferenceRepository;
 
     @Autowired
-    private TokenProvider tokenProvider;
+    private TokenProviderTuCode tokenProviderTuCode;
+
+    private PasswordEncoder passwordEncoder;
 
     /*
      * @RequestMapping("/")
@@ -137,7 +141,7 @@ public class UserController {
 
         else {
             if (request.getPassword().equals(user.get(0).getPassword())) {
-                // return new ResponseEntity(tokenProvider.generateJwtToken(
+                // return new ResponseEntity(tokenProviderTuCode.generateToken(
                         // service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
 
                         return new ResponseEntity(user.get(0), HttpStatus.OK);
@@ -170,8 +174,12 @@ public class UserController {
             user.setEmployment_Details(
                     new Employment_Details(null, null, null, null, null, null, null, null, user.getUser_signature()));
             user.setOwnership_Prefference(new Ownership_Prefference(null, null, null, null, user.getUser_signature()));
-            user.setUserRole(new UserRole(null,"Buyer", "Buyer's Right",user.getEmail()));
+            user.setRole(Role.USER);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             service.save(user);
+
+            // tokenProviderTuCode.generateToken(user);
+
             return new ResponseEntity(user, HttpStatus.CREATED);
         }
     }

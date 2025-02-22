@@ -1,7 +1,13 @@
 package co.ke.tucode.buyer.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import co.ke.tucode.buyer.repositories.UserRoleRepository;
 import jakarta.persistence.*;
@@ -21,9 +27,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Africana_User{
+public class Africana_User implements UserDetails {
 
-//    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -77,18 +83,42 @@ public class Africana_User{
     @JoinColumn(name = "ownership_PrefferenceID")
     private Ownership_Prefference ownership_Prefference;
 
-    @Column(unique = true, insertable = false, updatable = false)
-    private Integer role_ID;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_ID")
-    private UserRole userRole;
+    // @Column(unique = true, insertable = false, updatable = false)
+    // private Integer role_ID;
+    // @OneToOne(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "role_ID")
+    // private UserRole userRole;
 
-    // @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    // @JoinTable(name = "USER_ROLES",
-    //         joinColumns = {
-    //         @JoinColumn(name = "email")
-    //         },
-    //         inverseJoinColumns = {
-    //         @JoinColumn(name = "user_mail") })
-    // private Set<UserRole> userRoles;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
