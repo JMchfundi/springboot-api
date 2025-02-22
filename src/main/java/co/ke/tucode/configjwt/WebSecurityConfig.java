@@ -68,7 +68,8 @@ public class WebSecurityConfig {
 						.allowedOrigins(
 								"http://localhost:3000",
 								"https://www.housing.tucode.co.ke",
-								"https://www.capdo.org");
+								"https://www.capdo.org",
+                                "https://www.boreshamaisha.tucode.co.ke");
 				// registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
 			}
 		};
