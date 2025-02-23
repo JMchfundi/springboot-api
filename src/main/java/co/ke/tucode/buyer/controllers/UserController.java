@@ -153,7 +153,7 @@ public class UserController {
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);        
-                return new ResponseEntity(tokenProviderTuCode.generateRefinedToken(authentication), HttpStatus.OK);
+                return new ResponseEntity(new String(tokenProviderTuCode.generateRefinedToken(authentication)), HttpStatus.OK);
 
                 // return new ResponseEntity(user.get(0), HttpStatus.OK);
     }
