@@ -141,7 +141,6 @@ public class UserController {
      * .......................obr_get_service_id retrieve specific db
      * data.............................
      */
-    @CrossOrigin(origins = {"https://www.boreshamaisha.tucode.co.ke", "http://localhost:3000"})
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
 
