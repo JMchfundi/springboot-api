@@ -1,4 +1,4 @@
-package co.ke.tucode.configjwt;
+package co.ke.tucode.config;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
