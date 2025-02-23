@@ -103,7 +103,7 @@ public class UserController {
      * .......................obr_get_service retrieve all db
      * data.............................
      */
-    @CrossOrigin(origins = {"https://www.boreshamaisha.tucode.co.ke", "http://localhost:3000"}, allowedHeaders = "X-Requested-With, Content-Type, Authorization,Origin, Accept, Access-Control-Request-Method", methods = RequestMethod.GET)
+    // @CrossOrigin(origins = {"https://www.boreshamaisha.tucode.co.ke", "http://localhost:3000"}, allowedHeaders = "X-Requested-With, Content-Type, Authorization,Origin, Accept, Access-Control-Request-Method", methods = RequestMethod.GET)
     @RequestMapping(value = "/get_service", method = RequestMethod.GET)
     public ResponseEntity<?> get_service() {
         List<Africana_User> certificates = service.findAll();
@@ -141,6 +141,7 @@ public class UserController {
      * .......................obr_get_service_id retrieve specific db
      * data.............................
      */
+    // @CrossOrigin(origins = {"https://www.boreshamaisha.tucode.co.ke", "http://localhost:3000"})
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
 
