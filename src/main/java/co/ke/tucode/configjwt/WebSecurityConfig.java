@@ -59,19 +59,28 @@ public class WebSecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins(
-								"http://localhost:3000",
-								"https://www.housing.tucode.co.ke",
-								"https://www.capdo.org",
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://www.housing.tucode.co.ke",
+                                "https://www.capdo.org",
                                 "https://www.boreshamaisha.tucode.co.ke");
-				// registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
-			}
-		};
-	}
+                registry.addMapping("/get_service")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://www.housing.tucode.co.ke",
+                                "https://www.capdo.org",
+                                "https://www.boreshamaisha.tucode.co.ke")
+                        .allowedHeaders(
+                                "X-Requested-With, Content-Type, Authorization, Origin, Accept, Host")
+                        .allowedMethods("POST, GET, PUT, OPTIONS, DELETE");
+                // registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
+            }
+        };
+    }
 }
