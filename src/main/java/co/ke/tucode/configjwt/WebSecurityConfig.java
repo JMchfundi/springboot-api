@@ -2,6 +2,7 @@ package co.ke.tucode.configjwt;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +26,10 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+    @Autowired
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
     private final Africana_UserService userService;
 
     @Bean
@@ -33,7 +37,8 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         request -> request.requestMatchers("/login_request", "/post_service")
-                                .permitAll().anyRequest().authenticated())
+                                .permitAll()
+                                .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -59,19 +64,19 @@ public class WebSecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins(
-								"http://localhost:3000",
-								"https://www.housing.tucode.co.ke",
-								"https://www.capdo.org",
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://www.housing.tucode.co.ke",
+                                "https://www.capdo.org",
                                 "https://www.boreshamaisha.tucode.co.ke");
-				// registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
-			}
-		};
-	}
+                // registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
+            }
+        };
+    }
 }
