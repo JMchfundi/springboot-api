@@ -1,6 +1,7 @@
 package co.ke.tucode.buyer.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -141,8 +142,8 @@ public class UserController {
      */
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
-        
-        authenticationManager
+
+        final Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         List<Africana_User> user = service.findByEmail(request.getEmail());
@@ -151,9 +152,10 @@ public class UserController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
         else {
-            if (passwordEncoder.matches(request.getPassword(), user.get(0).getPassword())            ) {
-                return new ResponseEntity(tokenProviderTuCode.generateToken(
-                service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
+            if (passwordEncoder.matches(request.getPassword(), user.get(0).getPassword())) {
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                return new ResponseEntity(tokenProviderTuCode.generateToken(authentication), HttpStatus.OK);
 
                 // return new ResponseEntity(user.get(0), HttpStatus.OK);
 
