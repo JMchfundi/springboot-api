@@ -83,21 +83,24 @@ public class WebSecurityConfig {
     // return new CorsFilter(source);
     // }
 
-    // @Bean
-    // public WebMvcConfigurer corsConfigurer() {
-    //     return new WebMvcConfigurer() {
-    //         @Override
-    //         public void addCorsMappings(CorsRegistry registry) {
-    //             registry.addMapping("/**")
-    //                     .allowedOrigins(
-    //                             "http://localhost:3000/");
-    //                     // .allowCredentials(true)
-    //                     // .allowedHeaders(
-    //                     //         "X-Requested-With, Content-Type, Authorization, Origin, Accept, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Origin")
-    //                     // .allowedMethods("POST, GET, PUT, OPTIONS, DELETE");
-    //             // config.setMaxAge(3600L);
-    //             // registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
-    //         }
-    //     };
-    // }
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "https://www.housing.tucode.co.ke",
+                                "https://www.capdo.org",
+                                "https://www.boreshamaisha.tucode.co.ke");
+                        // .allowCredentials(true);
+                        // .allowedHeaders(
+                        //         "X-Requested-With, Content-Type, Authorization, Origin, Accept, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Origin")
+                        // .allowedMethods("POST, GET, PUT, OPTIONS, DELETE");
+                // config.setMaxAge(3600L);
+                // registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
+            }
+        };
+    }
 }
