@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -145,25 +146,16 @@ public class UserController {
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
 
-        authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-
-        List<Africana_User> user = service.findByEmail(request.getEmail());
-
-        if (user.isEmpty())
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-
-        else {
-            if (passwordEncoder.matches(request.getPassword(), user.get(0).getPassword())) {
-                return new ResponseEntity(tokenProviderTuCode.generateToken(
-                        service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
+                final Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);        
+                return new ResponseEntity(tokenProviderTuCode.generateRefinedToken(authentication), HttpStatus.OK);
 
                 // return new ResponseEntity(user.get(0), HttpStatus.OK);
-
-            }
-
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
     }
 
     /*
