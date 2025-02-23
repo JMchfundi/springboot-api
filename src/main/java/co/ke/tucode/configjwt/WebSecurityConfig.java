@@ -16,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -64,19 +67,37 @@ public class WebSecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins(
-                                "http://localhost:3000",
-                                "https://www.housing.tucode.co.ke",
-                                "https://www.capdo.org",
-                                "https://www.boreshamaisha.tucode.co.ke");
-                // registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
-            }
-        };
-    }
+    // @Bean
+    // public CorsFilter corsFilter() {
+    // UrlBasedCorsConfigurationSource source = new
+    // UrlBasedCorsConfigurationSource();
+    // CorsConfiguration config = new CorsConfiguration();
+    // config.setAllowCredentials(true);
+    // config.addAllowedOrigin("http://localhost:3000");
+    // config.addAllowedHeader("X-Requested-With, Content-Type, Authorization,
+    // Origin, Accept, Access-Control-Request-Method,
+    // Access-Control-Request-Headers");
+    // config.addAllowedMethod("POST, GET, PUT, OPTIONS, DELETE");
+    // // config.setMaxAge(3600L);
+    // source.registerCorsConfiguration("/**", config);
+    // return new CorsFilter(source);
+    // }
+
+    // @Bean
+    // public WebMvcConfigurer corsConfigurer() {
+    //     return new WebMvcConfigurer() {
+    //         @Override
+    //         public void addCorsMappings(CorsRegistry registry) {
+    //             registry.addMapping("/**")
+    //                     .allowedOrigins(
+    //                             "http://localhost:3000/");
+    //                     // .allowCredentials(true)
+    //                     // .allowedHeaders(
+    //                     //         "X-Requested-With, Content-Type, Authorization, Origin, Accept, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Origin")
+    //                     // .allowedMethods("POST, GET, PUT, OPTIONS, DELETE");
+    //             // config.setMaxAge(3600L);
+    //             // registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
+    //         }
+    //     };
+    // }
 }

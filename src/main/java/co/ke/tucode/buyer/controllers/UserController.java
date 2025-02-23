@@ -103,6 +103,7 @@ public class UserController {
      * .......................obr_get_service retrieve all db
      * data.............................
      */
+    @CrossOrigin(origins = "*", allowedHeaders = "X-Requested-With, Content-Type, Authorization,Origin, Accept, Access-Control-Request-Method", methods = RequestMethod.GET)
     @RequestMapping(value = "/get_service", method = RequestMethod.GET)
     public ResponseEntity<?> get_service() {
         List<Africana_User> certificates = service.findAll();
@@ -140,9 +141,10 @@ public class UserController {
      * .......................obr_get_service_id retrieve specific db
      * data.............................
      */
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/login_request", method = RequestMethod.POST)
     public ResponseEntity<?> login_request(@Valid @RequestBody LoginRequest request) {
-        
+
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -152,9 +154,9 @@ public class UserController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
 
         else {
-            if (passwordEncoder.matches(request.getPassword(), user.get(0).getPassword())            ) {
+            if (passwordEncoder.matches(request.getPassword(), user.get(0).getPassword())) {
                 return new ResponseEntity(tokenProviderTuCode.generateToken(
-                service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
+                        service.loadUserByUsername(user.get(0).getEmail())), HttpStatus.OK);
 
                 // return new ResponseEntity(user.get(0), HttpStatus.OK);
 
