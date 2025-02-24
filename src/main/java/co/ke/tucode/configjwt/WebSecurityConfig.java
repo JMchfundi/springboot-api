@@ -30,6 +30,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors();
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         request -> request.requestMatchers("/login_request", "/post_service")
@@ -70,15 +71,15 @@ public class WebSecurityConfig {
                                 "https://www.housing.tucode.co.ke",
                                 "https://www.capdo.org",
                                 "https://www.boreshamaisha.tucode.co.ke");
-                registry.addMapping("/get_service")
-                        .allowedOrigins(
-                                "http://localhost:3000",
-                                "https://www.housing.tucode.co.ke",
-                                "https://www.capdo.org",
-                                "https://www.boreshamaisha.tucode.co.ke")
-                        .allowedHeaders(
-                                "X-Requested-With, Content-Type, Authorization, Origin, Accept, Host")
-                        .allowedMethods("POST, GET, PUT, OPTIONS, DELETE");
+                // registry.addMapping("/get_service")
+                //         .allowedOrigins(
+                //                 "http://localhost:3000",
+                //                 "https://www.housing.tucode.co.ke",
+                //                 "https://www.capdo.org",
+                //                 "https://www.boreshamaisha.tucode.co.ke")
+                //         .allowedHeaders(
+                //                 "X-Requested-With, Content-Type, Authorization, Origin, Accept, Host")
+                //         .allowedMethods("POST, GET, PUT, OPTIONS, DELETE");
                 // registry.addMapping("/**").allowedOrigins("https://www.housing.tucode.co.ke");
             }
         };
