@@ -33,7 +33,7 @@ public class WebSecurityConfig {
         http.cors();
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        request -> request.requestMatchers("/login_request", "/post_service", "/get_service")
+                        request -> request.requestMatchers("/login_request", "/post_service")
                                 .permitAll().anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
