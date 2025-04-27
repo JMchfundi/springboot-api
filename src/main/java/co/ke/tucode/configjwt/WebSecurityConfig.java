@@ -67,7 +67,7 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "http://localhost:3000",
+                                "http://localhost:8081",
                                 "https://www.housing.tucode.co.ke",
                                 "https://www.capdo.org",
                                 "https://www.boreshamaisha.tucode.co.ke");

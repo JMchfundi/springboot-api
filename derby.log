@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sun Apr 27 10:56:31 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-0196-763f-7038-000001d03ef8 
+on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@639fee48 
+Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
+java.vendor=Debian
+java.runtime.version=21.0.5+11-Debian-1
+user.dir=/home/kali/Downloads/springboot-api
+os.name=Linux
+os.arch=amd64
+os.version=6.1.0-kali9-amd64
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
