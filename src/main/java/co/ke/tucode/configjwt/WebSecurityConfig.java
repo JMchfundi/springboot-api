@@ -68,6 +68,7 @@ public class WebSecurityConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:3000",
+                                "http://192.168.43.134:3000/",
                                 "https://www.housing.tucode.co.ke",
                                 "https://www.capdo.org",
                                 "https://www.boreshamaisha.tucode.co.ke");
