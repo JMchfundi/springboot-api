@@ -1,4 +1,4 @@
-package co.ke.capdo.beans;
+package co.ke.mail.beans;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
