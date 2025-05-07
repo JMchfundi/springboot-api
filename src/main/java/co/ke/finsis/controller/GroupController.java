@@ -71,5 +71,4 @@ public class GroupController {
         List<GroupDTO> updatedGroups = groupService.updateGroupsBatch(dtos);
         return ResponseEntity.ok(updatedGroups);
     }
-
 }
