@@ -1,6 +1,7 @@
 package co.ke.finsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ public class ClientInfoController {
 
 
     // Create or Update Client (Submit Form)
-    @PostMapping("/submit")
+    @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    
     public ResponseEntity<String> submitForm(@Valid @RequestPart("clientInfo") ClientInfo clientInfo,
                                              BindingResult bindingResult,
                                              @RequestPart("idDocument") MultipartFile idDocument,
