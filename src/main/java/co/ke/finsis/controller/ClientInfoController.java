@@ -20,18 +20,27 @@ public class ClientInfoController {
     @Autowired
     private ClientInfoService clientInfoService;
 
+
     // Create or Update Client (Submit Form)
     @PostMapping("/submit")
-    public ResponseEntity<String> submitForm(@Valid @RequestBody ClientInfo clientInfo, BindingResult bindingResult) {
+    public ResponseEntity<String> submitForm(@Valid @RequestPart("clientInfo") ClientInfo clientInfo,
+                                             BindingResult bindingResult,
+                                             @RequestPart("idDocument") MultipartFile idDocument,
+                                             @RequestPart("passportPhoto") MultipartFile passportPhoto) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Validation error occurred.");
         }
 
         try {
+            // Process and save the client information
             clientInfoService.saveClientInfo(clientInfo);
-            return ResponseEntity.ok("Client submitted successfully.");
+
+            // Process the uploaded files (e.g., save them to a storage location)
+            // Example: clientInfoService.saveAttachments(idDocument, passportPhoto);
+
+            return ResponseEntity.ok("Client and attachments submitted successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("An error occurred while processing the form.");
+            return ResponseEntity.status(500).body("An error occurred while processing the form and attachments.");
         }
     }
 
