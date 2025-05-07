@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.repository.ClientInfoRepository;
+import jakarta.annotation.PostConstruct;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,19 @@ public class ClientInfoService {
 
     @Value("${file.upload-dir}")
     private String uploadDir;
+
+    @PostConstruct
+    public void ensureUploadDirExists() {
+        Path rootPath = Paths.get(uploadDir);
+        if (!Files.exists(rootPath)) {
+            try {
+                Files.createDirectories(rootPath);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create upload directory: " + uploadDir, e);
+            }
+        }
+    }
+
 
     // Create or Update (Save) ClientInfo
     public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto) throws IOException {
