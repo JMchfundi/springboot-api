@@ -33,7 +33,8 @@ public class ClientInfoController {
 
         try {
             // Process and save the client information
-            clientInfoService.saveClientInfo(clientInfo);
+            clientInfoService.saveClientInfo(clientInfo, idDocument, passportPhoto);
+            // Save the files (idDocument and passportPhoto) if needed
 
             // Process the uploaded files (e.g., save them to a storage location)
             // Example: clientInfoService.saveAttachments(idDocument, passportPhoto);

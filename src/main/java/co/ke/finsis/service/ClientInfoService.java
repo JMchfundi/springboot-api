@@ -26,9 +26,9 @@ public class ClientInfoService {
     private String uploadDir;
 
     // Create or Update (Save) ClientInfo
-    public ClientInfo saveClientInfo(ClientInfo clientInfo) throws IOException {
+    public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto) throws IOException {
         // Handle file uploads
-        handleFileUploads(clientInfo);
+        handleFileUploads(clientInfo, idDocument, passportPhoto);
 
         return clientInfoRepository.save(clientInfo);
     }
@@ -47,7 +47,7 @@ public class ClientInfoService {
     public ClientInfo updateClientInfo(Long id, ClientInfo clientInfo) throws IOException {
         if (clientInfoRepository.existsById(id)) {
             clientInfo.setId(id);
-            return saveClientInfo(clientInfo);
+            return saveClientInfo(clientInfo, null, null);
         }
         throw new RuntimeException("Client not found");
     }
@@ -62,9 +62,7 @@ public class ClientInfoService {
     }
 
     // File Handling: Handle file uploads to server directory
-    private void handleFileUploads(ClientInfo clientInfo) throws IOException {
-        MultipartFile idDocument = clientInfo.getIdDocument();
-        MultipartFile passportPhoto = clientInfo.getPassportPhoto();
+    private void handleFileUploads(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto) throws IOException {
 
         // Handle ID Document file upload
         if (idDocument != null && !idDocument.isEmpty()) {
