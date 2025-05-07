@@ -43,8 +43,9 @@ public class ClientInfo {
     @NotBlank(message = "Ward is required")
     private String ward;
 
+    @Column(name = "groupName")
     @NotBlank(message = "Group is required")
-    private String groupName;
+    private String group;
 
     // Step 2: Next of Kin
     @NotBlank(message = "Next of Kin Name is required")
