@@ -25,13 +25,8 @@ public class ClientInfoController {
     // Create or Update Client (Submit Form)
     @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    
     public ResponseEntity<String> submitForm(@Valid @RequestPart("clientInfo") ClientInfo clientInfo,
-                                             BindingResult bindingResult,
                                              @RequestPart("idDocument") MultipartFile idDocument,
                                              @RequestPart("passportPhoto") MultipartFile passportPhoto) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("Validation error occurred.");
-        }
-
         try {
             // Process and save the client information
             clientInfoService.saveClientInfo(clientInfo, idDocument, passportPhoto);
