@@ -43,26 +43,33 @@ public class GroupController {
     }
 
     // GET by group name
-@GetMapping("/by-name/{groupName}")
-public ResponseEntity<GroupDTO> getByGroupName(@PathVariable String groupName) {
-    return groupService.getGroupByName(groupName)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
-}
+    @GetMapping("/by-name/{groupName}")
+    public ResponseEntity<GroupDTO> getByGroupName(@PathVariable String groupName) {
+        return groupService.getGroupByName(groupName)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-// PUT by group name
-@PutMapping("/by-name/{groupName}")
-public ResponseEntity<GroupDTO> updateByGroupName(@PathVariable String groupName, @RequestBody GroupDTO dto) {
-    return groupService.updateGroupByName(groupName, dto)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
-}
+    // PUT by group name
+    @PutMapping("/by-name/{groupName}")
+    public ResponseEntity<GroupDTO> updateByGroupName(@PathVariable String groupName, @RequestBody GroupDTO dto) {
+        return groupService.updateGroupByName(groupName, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-// DELETE by group name
-@DeleteMapping("/by-name/{groupName}")
-public ResponseEntity<Void> deleteByGroupName(@PathVariable String groupName) {
-    return groupService.deleteGroupByName(groupName)
-            ? ResponseEntity.noContent().build()
-            : ResponseEntity.notFound().build();
-}
+    // DELETE by group name
+    @DeleteMapping("/by-name/{groupName}")
+    public ResponseEntity<Void> deleteByGroupName(@PathVariable String groupName) {
+        return groupService.deleteGroupByName(groupName)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/batch")
+    public ResponseEntity<List<GroupDTO>> batchUpdateGroups(@RequestBody List<GroupDTO> dtos) {
+        List<GroupDTO> updatedGroups = groupService.updateGroupsBatch(dtos);
+        return ResponseEntity.ok(updatedGroups);
+    }
+
 }

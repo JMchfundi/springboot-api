@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -104,4 +105,14 @@ public class GroupService {
                     return true;
                 }).orElse(false);
     }
+
+    public List<GroupDTO> updateGroupsBatch(List<GroupDTO> dtos) {
+        List<GroupDTO> updatedGroups = new ArrayList<>();
+        for (GroupDTO dto : dtos) {
+            GroupDTO updatedGroup = updateGroup(dto.getId(), dto);
+            updatedGroups.add(updatedGroup);
+        }
+        return updatedGroups;
+    }
+
 }
