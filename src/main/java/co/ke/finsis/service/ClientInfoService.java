@@ -38,9 +38,9 @@ public class ClientInfoService {
         }
     }
 
-
     // Create or Update (Save) ClientInfo
-    public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto) throws IOException {
+    public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
+            throws IOException {
         // Handle file uploads
         handleFileUploads(clientInfo, idDocument, passportPhoto);
 
@@ -76,7 +76,8 @@ public class ClientInfoService {
     }
 
     // File Handling: Handle file uploads to server directory
-    private void handleFileUploads(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto) throws IOException {
+    private void handleFileUploads(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
+            throws IOException {
 
         // Handle ID Document file upload
         if (idDocument != null && !idDocument.isEmpty()) {
@@ -93,18 +94,28 @@ public class ClientInfoService {
 
     // Method to save file to server directory and return the file path
     private String saveFileToServer(MultipartFile file, String subDir) throws IOException {
-        // Create directories if they do not exist
-        Path directoryPath = Paths.get(uploadDir, subDir);
+        // Resolve the absolute path to the base upload directory
+        Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+    
+        // Append sub-directory
+        Path directoryPath = basePath.resolve(subDir);
+    
+        // Create directory if it doesn't exist
         if (!Files.exists(directoryPath)) {
             Files.createDirectories(directoryPath);
         }
-
-        // Generate the file path
-        Path filePath = Paths.get(directoryPath.toString(), file.getOriginalFilename());
-
-        // Save the file to the server
-        file.transferTo(filePath.toFile());
-
-        return filePath.toString();  // Return the path to store in DB
-    }
+    
+        // Generate unique file name
+        String uniqueFileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = directoryPath.resolve(uniqueFileName);
+    
+        // Save file
+        try {
+            file.transferTo(filePath.toFile());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save file: " + uniqueFileName, e);
+        }
+    
+        return filePath.toString(); // You can also store a relative path if needed
+    }    
 }
