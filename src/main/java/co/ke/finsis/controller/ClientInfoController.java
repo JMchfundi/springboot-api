@@ -1,6 +1,7 @@
 package co.ke.finsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,9 @@ public class ClientInfoController {
 
     @Autowired
     private ClientInfoService clientInfoService;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     // Create or Update Client (Submit Form)
     @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -115,7 +119,8 @@ public class ClientInfoController {
                 return ResponseEntity.badRequest().body("Invalid path.");
             }
     
-            Path filePath = Paths.get("uploads", folder).resolve(fileName).normalize();
+            Path filePath = Paths.get(uploadDir, folder).resolve(fileName).normalize();
+            // Path filePath = Paths.get("uploads", folder).resolve(fileName).normalize();
             File file = filePath.toFile();
     
             if (!file.exists()) {
