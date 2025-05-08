@@ -38,15 +38,6 @@ public class ClientInfoService {
         }
     }
 
-    // Create or Update (Save) ClientInfo
-    public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
-            throws IOException {
-        // Handle file uploads
-        handleFileUploads(clientInfo, idDocument, passportPhoto);
-
-        return clientInfoRepository.save(clientInfo);
-    }
-
     // Get All Clients
     public List<ClientInfo> getAllClients() {
         return clientInfoRepository.findAll();
@@ -76,7 +67,7 @@ public class ClientInfoService {
     }
 
     // File Handling: Handle file uploads to server directory
-    private void handleFileUploads(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
+    public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
             throws IOException {
 
         // Handle ID Document file upload
@@ -90,6 +81,8 @@ public class ClientInfoService {
             String passportPhotoPath = saveFileToServer(passportPhoto, "passport_photos");
             clientInfo.setPassportPhotoPath(passportPhotoPath);
         }
+
+        return clientInfoRepository.save(clientInfo);
     }
 
     // Method to save file to server directory and return the file path
