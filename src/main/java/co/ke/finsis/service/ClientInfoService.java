@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.repository.ClientInfoRepository;
@@ -73,13 +74,21 @@ public class ClientInfoService {
         // Handle ID Document file upload
         if (idDocument != null && !idDocument.isEmpty()) {
             String idDocumentPath = saveFileToServer(idDocument, "id_documents");
-            clientInfo.setIdDocumentPath(idDocumentPath);
+            clientInfo.setIdDocumentPath(ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/api/clients/files/")
+                    .path(idDocumentPath)
+                    .toUriString());
         }
 
         // Handle Passport Photo file upload
         if (passportPhoto != null && !passportPhoto.isEmpty()) {
             String passportPhotoPath = saveFileToServer(passportPhoto, "passport_photos");
-            clientInfo.setPassportPhotoPath(passportPhotoPath);
+            clientInfo.setPassportPhotoPath(ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/api/clients/files/")
+                    .path(passportPhotoPath)
+                    .toUriString());
         }
 
         return clientInfoRepository.save(clientInfo);
@@ -89,26 +98,26 @@ public class ClientInfoService {
     private String saveFileToServer(MultipartFile file, String subDir) throws IOException {
         // Resolve the absolute path to the base upload directory
         Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
-    
+
         // Append sub-directory
         Path directoryPath = basePath.resolve(subDir);
-    
+
         // Create directory if it doesn't exist
         if (!Files.exists(directoryPath)) {
             Files.createDirectories(directoryPath);
         }
-    
+
         // Generate unique file name
         String uniqueFileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path filePath = directoryPath.resolve(uniqueFileName);
-    
+
         // Save file
         try {
             file.transferTo(filePath.toFile());
         } catch (IOException e) {
             throw new RuntimeException("Failed to save file: " + uniqueFileName, e);
         }
-    
-        return filePath.toString(); // You can also store a relative path if needed
-    }    
+
+        return uniqueFileName.toString(); // You can also store a relative path if needed
+    }
 }

@@ -1,6 +1,9 @@
 package co.ke.finsis.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,9 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.service.ClientInfoService;
+import co.ke.tucode.buyer.entities.ProfileUpload;
 
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +31,14 @@ public class ClientInfoController {
     @Autowired
     private ClientInfoService clientInfoService;
 
-
     // Create or Update Client (Submit Form)
-    @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    
+    @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> submitForm(@Valid @RequestPart("clientInfo") ClientInfo clientInfo,
-                                             @RequestPart("idDocument") MultipartFile idDocument,
-                                             @RequestPart("passportPhoto") MultipartFile passportPhoto) {
+            @RequestPart("idDocument") MultipartFile idDocument,
+            @RequestPart("passportPhoto") MultipartFile passportPhoto) {
         try {
             // Process and save the client information
+
             clientInfoService.saveClientInfo(clientInfo, idDocument, passportPhoto);
             // Save the files (idDocument and passportPhoto) if needed
 
@@ -60,7 +70,8 @@ public class ClientInfoController {
 
     // Update Client Info
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateClient(@PathVariable Long id, @Valid @RequestBody ClientInfo clientInfo, BindingResult bindingResult) {
+    public ResponseEntity<String> updateClient(@PathVariable Long id, @Valid @RequestBody ClientInfo clientInfo,
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Validation error occurred.");
         }
@@ -87,7 +98,7 @@ public class ClientInfoController {
     // File Upload (Separate endpoint for file uploads if needed independently)
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFiles(@RequestParam("idDocument") MultipartFile idDocument,
-                                              @RequestParam("passportPhoto") MultipartFile passportPhoto) {
+            @RequestParam("passportPhoto") MultipartFile passportPhoto) {
         try {
             // You can process the files here if needed
             return ResponseEntity.ok("Files uploaded successfully.");
@@ -95,4 +106,29 @@ public class ClientInfoController {
             return ResponseEntity.status(500).body("Error uploading files.");
         }
     }
+
+    @GetMapping("/files/{fileName:.+}")
+    public ResponseEntity<?> getFile(@PathVariable String fileName) {
+        try {
+            Path filePath = Paths.get("uploads").resolve(fileName).normalize();
+            File file = filePath.toFile();
+
+            if (!file.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            String contentType = Files.probeContentType(filePath);
+
+            return ResponseEntity.ok()
+                    .contentType(
+                            MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Could not serve file: " + e.getMessage());
+        }
+    }
+
 }
