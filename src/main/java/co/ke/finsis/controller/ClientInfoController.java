@@ -107,28 +107,32 @@ public class ClientInfoController {
         }
     }
 
-    @GetMapping("/files/{fileName:.+}")
-    public ResponseEntity<?> getFile(@PathVariable String fileName) {
+    @GetMapping("/files/{folder}/{fileName:.+}")
+    public ResponseEntity<?> getFile(@PathVariable String folder, @PathVariable String fileName) {
         try {
-            Path filePath = Paths.get("uploads").resolve(fileName).normalize();
+            // Sanitize inputs (avoid path traversal)
+            if (!folder.matches("[a-zA-Z0-9_-]+") || !fileName.matches("[\\w\\-.]+")) {
+                return ResponseEntity.badRequest().body("Invalid path.");
+            }
+    
+            Path filePath = Paths.get("uploads", folder).resolve(fileName).normalize();
             File file = filePath.toFile();
-
+    
             if (!file.exists()) {
                 return ResponseEntity.notFound().build();
             }
-
+    
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             String contentType = Files.probeContentType(filePath);
-
+    
             return ResponseEntity.ok()
-                    .contentType(
-                            MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
+                    .contentType(MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
                     .body(resource);
-
+    
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Could not serve file: " + e.getMessage());
         }
     }
-
+    
 }

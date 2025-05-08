@@ -76,7 +76,7 @@ public class ClientInfoService {
             String idDocumentPath = saveFileToServer(idDocument, "id_documents");
             clientInfo.setIdDocumentPath(ServletUriComponentsBuilder
                     .fromCurrentContextPath()
-                    .path("/api/clients/files/")
+                    .path("/api/clients/files/id_documents/")
                     .path(idDocumentPath)
                     .toUriString());
         }
@@ -86,7 +86,7 @@ public class ClientInfoService {
             String passportPhotoPath = saveFileToServer(passportPhoto, "passport_photos");
             clientInfo.setPassportPhotoPath(ServletUriComponentsBuilder
                     .fromCurrentContextPath()
-                    .path("/api/clients/files/")
+                    .path("/api/clients/files/passport_photos/")
                     .path(passportPhotoPath)
                     .toUriString());
         }
