@@ -35,3 +35,4 @@ build/
 # External DB
 mydb
 *.log
+uploads/
