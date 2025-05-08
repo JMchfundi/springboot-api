@@ -118,8 +118,8 @@ public class ClientInfoController {
             if (!folder.matches("[a-zA-Z0-9_-]+") || !fileName.matches("[\\w\\-.]+")) {
                 return ResponseEntity.badRequest().body("Invalid path.");
             }
-    
-            Path filePath = Paths.get(uploadDir, folder).resolve(fileName).normalize();
+            // Construct the file path
+            Path filePath = Paths.get(System.getProperty("user.dir"), uploadDir, folder).resolve(fileName).normalize();
             // Path filePath = Paths.get("uploads", folder).resolve(fileName).normalize();
             File file = filePath.toFile();
     

@@ -89,7 +89,10 @@ public class ClientInfoService {
     // Method to save file to server directory and return the file path
     private String saveFileToServer(MultipartFile file, String subDir) throws IOException {
         // Resolve the absolute path to the base upload directory
-        Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+         // Use a base writable directory — like temp or /home/site/uploads for Azure
+    Path basePath = Paths.get(System.getProperty("user.dir"), uploadDir); // Dynamically under current working dir
+
+        // Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
 
         // Append sub-directory
         Path directoryPath = basePath.resolve(subDir);
