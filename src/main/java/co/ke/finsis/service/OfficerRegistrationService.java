@@ -1,5 +1,6 @@
 package co.ke.finsis.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,12 +10,19 @@ import co.ke.finsis.repository.OfficerRegistrationRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
 public class OfficerRegistrationService {
 
     private final OfficerRegistrationRepository repository;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
 
     public OfficerRegistrationService(OfficerRegistrationRepository repository) {
         this.repository = repository;
@@ -63,17 +71,37 @@ public class OfficerRegistrationService {
         officer.setNokRelationship(request.getNokRelationship());
         officer.setBankDetails(request.getBankDetails());
 
-        officer.setIdDocumentPath(idDocPath);
-        officer.setPassportPhotoPath(passportPhotoPath);
+        officer.setIdDocumentPath("api/clients/files/id_documents/"+idDocPath);
+        officer.setPassportPhotoPath("api/clients/files/passport_photos/"+passportPhotoPath);
         return officer;
     }
 
-    private String saveFile(MultipartFile file, String folder) throws IOException {
-        if (file == null || file.isEmpty()) return null;
-        File dir = new File("uploads/" + folder);
-        if (!dir.exists()) dir.mkdirs();
-        String path = "uploads/" + folder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        file.transferTo(new File(path));
-        return path;
+    private String saveFile(MultipartFile file, String subDir) throws IOException {
+            // Resolve the absolute path to the base upload directory
+             // Use a base writable directory — like temp or /home/site/uploads for Azure
+        Path basePath = Paths.get(System.getProperty("user.dir"), uploadDir); // Dynamically under current working dir
+    
+            // Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+    
+            // Append sub-directory
+            Path directoryPath = basePath.resolve(subDir);
+    
+            // Create directory if it doesn't exist
+            if (!Files.exists(directoryPath)) {
+                Files.createDirectories(directoryPath);
+            }
+    
+            // Generate unique file name
+            String uniqueFileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path filePath = directoryPath.resolve(uniqueFileName);
+    
+            // Save file
+            try {
+                file.transferTo(filePath.toFile());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to save file: " + uniqueFileName, e);
+            }
+    
+            return uniqueFileName.toString(); // You can also store a relative path if needed    
     }
 }
