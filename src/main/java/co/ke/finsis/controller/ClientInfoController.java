@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.service.ClientInfoService;
-import co.ke.tucode.buyer.entities.ProfileUpload;
+import co.ke.tucode.systemuser.entities.ProfileUpload;
 
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;

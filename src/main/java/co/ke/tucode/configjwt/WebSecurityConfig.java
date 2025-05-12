@@ -2,6 +2,7 @@ package co.ke.tucode.configjwt;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import co.ke.tucode.buyer.services.Africana_UserService;
+import co.ke.tucode.systemuser.entities.Africana_User;
+import co.ke.tucode.systemuser.entities.Role;
+import co.ke.tucode.systemuser.repositories.Africana_UserRepository;
+import co.ke.tucode.systemuser.services.Africana_UserService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -27,6 +31,27 @@ import lombok.RequiredArgsConstructor;
 public class WebSecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final Africana_UserService userService;
+
+    @Bean
+    public CommandLineRunner createInitialUser(Africana_UserRepository userRepository) {
+        return args -> {
+            String defaultEmail = "admin@tucode.co.ke";
+            if (userRepository.findByEmail(defaultEmail).isEmpty()) {
+                Africana_User user = Africana_User.builder()
+                        .username("admin")
+                        .email(defaultEmail)
+                        .password(passwordEncoder().encode("Password@2906")) // use encoded password
+                        .role(Role.ADMIN) // assuming you have an ADMIN role in your enum
+                        .user_signature("initial_signature")
+                        .build();
+
+                userRepository.save(user);
+                System.out.println("✔ Default admin user created.");
+            } else {
+                System.out.println("ℹ Default admin user already exists.");
+            }
+        };
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
