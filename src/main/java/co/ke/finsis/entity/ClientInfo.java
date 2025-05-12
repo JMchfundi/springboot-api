@@ -27,6 +27,7 @@ public class ClientInfo {
     private String phoneNumber;
 
     @NotBlank(message = "ID Number is required")
+    @Column(unique = true)
     private String idNumber;
 
     @Past(message = "Date of Birth should be in the past")

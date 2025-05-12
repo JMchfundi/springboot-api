@@ -115,7 +115,7 @@ public class ClientInfoController {
     public ResponseEntity<?> getFile(@PathVariable String folder, @PathVariable String fileName) {
         try {
             // Sanitize inputs (avoid path traversal)
-            if (!folder.matches("[a-zA-Z0-9_-]+") || !fileName.matches("[\\w\\-.]+")) {
+            if (!folder.matches("[a-zA-Z0-9_-]+") || !fileName.matches("[\\w\\-. ]+")) {
                 return ResponseEntity.badRequest().body("Invalid path.");
             }
             // Construct the file path
