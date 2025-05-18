@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "transactions_table") // Avoids the reserved keyword
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
