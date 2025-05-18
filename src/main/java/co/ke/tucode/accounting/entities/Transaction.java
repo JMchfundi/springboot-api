@@ -30,4 +30,13 @@ public class Transaction {
 
     @ManyToOne
     private JournalEntry journalEntry;
+    
+  // Added for extensible attributes
+    @Column(columnDefinition = "TEXT") // Or your database's JSON type
+    private String details; // Using String for now, consider JPA Converters
+
+    // Added to handle two accounts
+    private Long debitAccountId;
+    private Long creditAccountId;
+
 }
