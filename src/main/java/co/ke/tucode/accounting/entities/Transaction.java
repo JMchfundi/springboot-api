@@ -33,7 +33,7 @@ public class Transaction {
     private JournalEntry journalEntry;
     
   // Added for extensible attributes
-    @Column(columnDefinition = "TEXT") // Or your database's JSON type
+    @Lob
     private String details; // Using String for now, consider JPA Converters
 
     // Added to handle two accounts
