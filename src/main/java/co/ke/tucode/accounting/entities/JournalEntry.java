@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,5 +30,6 @@ public class JournalEntry {
     private LocalDate date;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "journalEntry")
+    @JsonManagedReference("journal-entry-transaction")
     private List<Transaction> transactions = new ArrayList<>();
 }

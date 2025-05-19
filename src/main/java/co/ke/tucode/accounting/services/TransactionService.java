@@ -68,7 +68,7 @@ public class TransactionService {
         // Create Debit Transaction
         Transaction debitTransaction = new Transaction();
         debitTransaction.setAmount(receiptPayload.getAmount());
-        debitTransaction.setDescription(receiptPayload.getDescription());
+        debitTransaction.setDescription(receiptPayload.getPaymentFor()+" "+receiptPayload.getReferenceNumber());
         debitTransaction.setType(TransactionType.DEBIT);
         debitTransaction.setAccount(debitAccount);
         debitTransaction.setJournalEntry(journalEntry);
@@ -77,12 +77,11 @@ public class TransactionService {
 
         // Create a JsonObject for receipt details
         JsonObject receiptDetailsJson = Json.createObjectBuilder()
-                .add("receiptNo", receiptPayload.getReceiptNo())
                 .add("receiptDate", receiptPayload.getReceiptDate() != null ? receiptPayload.getReceiptDate().toString() : "")
-                .add("receivedFrom", receiptPayload.getReceivedFrom())
+                .add("receivedFrom", receiptPayload.getPaymentFor())
                 .add("amountInWords", receiptPayload.getAmountInWords())
                 .add("paymentFor", receiptPayload.getPaymentFor())
-                .add("paymentMethod", receiptPayload.getPaymentMethod())
+                .add("paymentMethod", receiptPayload.getAccount())
                 .add("referenceNumber", receiptPayload.getReferenceNumber())
                 .add("schemaVersion", 2)  // Add schema version
                 .build();
@@ -103,7 +102,7 @@ public class TransactionService {
         // Create Credit Transaction
         Transaction creditTransaction = new Transaction();
         creditTransaction.setAmount(receiptPayload.getAmount());
-        creditTransaction.setDescription(receiptPayload.getDescription()); // You might need a different description
+        creditTransaction.setDescription(receiptPayload.getPaymentFor()+" "+receiptPayload.getReferenceNumber()); // You might need a different description
         creditTransaction.setType(TransactionType.CREDIT);
         creditTransaction.setAccount(creditAccount);
         creditTransaction.setJournalEntry(journalEntry);

@@ -7,16 +7,13 @@ import lombok.Data;
 
 @Data
 public class ReceiptPayload {
-    private String receiptNo;
+    // private String receiptNo;
+    private Long paymentFor;
     private LocalDate receiptDate;
-    private String receivedFrom;
+    // private String receivedFrom;
     private BigDecimal amount;
     private String amountInWords;
-    private Long paymentFor;
     private Long account;
-    // private Long debitAccountId;
-    // private Long creditAccountId;
-    private String paymentMethod;
     private String referenceNumber;
-    private String description; // General description for the transaction(s)
+    // private String description; // General description for the transaction(s)
 }

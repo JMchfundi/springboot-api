@@ -2,6 +2,8 @@ package co.ke.tucode.accounting.entities;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +29,11 @@ public class Transaction {
     private TransactionType type; // DEBIT or CREDIT
 
     @ManyToOne
+    @JsonBackReference
     private Account account;
 
     @ManyToOne
+    @JsonBackReference("journal-entry-transaction")
     private JournalEntry journalEntry;
     
   // Added for extensible attributes
