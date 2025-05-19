@@ -12,9 +12,10 @@ public class ReceiptPayload {
     private String receivedFrom;
     private BigDecimal amount;
     private String amountInWords;
-    private String paymentFor;
-    private Long debitAccountId;
-    private Long creditAccountId;
+    private Long paymentFor;
+    private Long account;
+    // private Long debitAccountId;
+    // private Long creditAccountId;
     private String paymentMethod;
     private String referenceNumber;
     private String description; // General description for the transaction(s)

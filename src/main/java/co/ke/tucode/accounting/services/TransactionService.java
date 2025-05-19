@@ -60,9 +60,9 @@ public class TransactionService {
         journalEntryRepo.save(journalEntry);
 
         // Fetch the debit and credit Accounts
-        Account debitAccount = accountRepo.findById(receiptPayload.getDebitAccountId())
+        Account debitAccount = accountRepo.findById(receiptPayload.getPaymentFor())
                 .orElseThrow(() -> new RuntimeException("Debit Account not found"));
-        Account creditAccount = accountRepo.findById(receiptPayload.getCreditAccountId())
+        Account creditAccount = accountRepo.findById(receiptPayload.getAccount())
                 .orElseThrow(() -> new RuntimeException("Credit Account not found"));
 
         // Create Debit Transaction
@@ -72,8 +72,8 @@ public class TransactionService {
         debitTransaction.setType(TransactionType.DEBIT);
         debitTransaction.setAccount(debitAccount);
         debitTransaction.setJournalEntry(journalEntry);
-        debitTransaction.setDebitAccountId(receiptPayload.getDebitAccountId());
-        debitTransaction.setCreditAccountId(receiptPayload.getCreditAccountId());
+        debitTransaction.setDebitAccountId(receiptPayload.getPaymentFor());
+        debitTransaction.setCreditAccountId(receiptPayload.getAccount());
 
         // Create a JsonObject for receipt details
         JsonObject receiptDetailsJson = Json.createObjectBuilder()
@@ -107,8 +107,8 @@ public class TransactionService {
         creditTransaction.setType(TransactionType.CREDIT);
         creditTransaction.setAccount(creditAccount);
         creditTransaction.setJournalEntry(journalEntry);
-        creditTransaction.setDebitAccountId(receiptPayload.getDebitAccountId());
-        creditTransaction.setCreditAccountId(receiptPayload.getCreditAccountId());
+        creditTransaction.setDebitAccountId(receiptPayload.getPaymentFor());
+        creditTransaction.setCreditAccountId(receiptPayload.getAccount());
 
         // Reuse the same JSON for credit transaction
         creditTransaction.setDetails(debitTransaction.getDetails());
