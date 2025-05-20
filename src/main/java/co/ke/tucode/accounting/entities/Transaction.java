@@ -15,33 +15,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "transactions_table") // Avoids the reserved keyword
+@Table(name = "transactions_table")
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private BigDecimal amount;
 
-    private String description; // ✅ New field added
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private TransactionType type; // DEBIT or CREDIT
 
+    // Use explicit relationship to debit account
     @ManyToOne
-    @JsonBackReference
-    private Account account;
+    @JoinColumn(name = "debit_account_id")
+    @JsonBackReference("debit-account")
+    private Account debitAccount;
+
+    // Use explicit relationship to credit account
+    @ManyToOne
+    @JoinColumn(name = "credit_account_id")
+    @JsonBackReference("credit-account")
+    private Account creditAccount;
 
     @ManyToOne
+    @JoinColumn(name = "journal_entry_id")
     @JsonBackReference("journal-entry-transaction")
     private JournalEntry journalEntry;
-    
-  // Added for extensible attributes
+
+    // Optional field for additional details (stored as text/blob)
     @Lob
-    private String details; // Using String for now, consider JPA Converters
-
-    // Added to handle two accounts
-    private Long debitAccountId;
-    private Long creditAccountId;
-
+    private String details;
 }

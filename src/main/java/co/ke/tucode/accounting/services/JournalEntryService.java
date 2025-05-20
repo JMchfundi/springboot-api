@@ -2,6 +2,7 @@ package co.ke.tucode.accounting.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,33 +31,47 @@ public class JournalEntryService {
         for (Transaction tx : transactions) {
             if (tx.getType() == TransactionType.DEBIT) {
                 debitTotal = debitTotal.add(tx.getAmount());
-            } else {
+            } else if (tx.getType() == TransactionType.CREDIT) {
                 creditTotal = creditTotal.add(tx.getAmount());
+            } else {
+                throw new IllegalArgumentException("Unknown transaction type");
             }
         }
 
-        if (!debitTotal.equals(creditTotal)) {
+        if (debitTotal.compareTo(creditTotal) != 0) {
             throw new IllegalArgumentException("Debits and Credits must match.");
         }
 
         JournalEntry journal = new JournalEntry();
         journal.setDate(LocalDate.now());
 
-        for (Transaction tx : transactions) {
-            Account acc = accountRepo.findById(tx.getAccount().getId())
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+        List<Transaction> updatedTransactions = new ArrayList<>();
 
-            if (tx.getType() == TransactionType.DEBIT) {
-                acc.setBalance(acc.getBalance().add(tx.getAmount()));
-            } else {
-                acc.setBalance(acc.getBalance().subtract(tx.getAmount()));
+        for (Transaction tx : transactions) {
+            Account debitAccount = null;
+            Account creditAccount = null;
+
+            if (tx.getDebitAccount() != null) {
+                debitAccount = accountRepo.findById(tx.getDebitAccount().getId())
+                        .orElseThrow(() -> new RuntimeException("Debit account not found"));
+                debitAccount.setBalance(debitAccount.getBalance().add(tx.getAmount()));
+                accountRepo.save(debitAccount);
+                tx.setDebitAccount(debitAccount);
+            }
+
+            if (tx.getCreditAccount() != null) {
+                creditAccount = accountRepo.findById(tx.getCreditAccount().getId())
+                        .orElseThrow(() -> new RuntimeException("Credit account not found"));
+                creditAccount.setBalance(creditAccount.getBalance().subtract(tx.getAmount()));
+                accountRepo.save(creditAccount);
+                tx.setCreditAccount(creditAccount);
             }
 
             tx.setJournalEntry(journal);
-            accountRepo.save(acc);
+            updatedTransactions.add(tx);
         }
 
-        journal.setTransactions(transactions);
+        journal.setTransactions(updatedTransactions);
         return journalRepo.save(journal);
     }
 

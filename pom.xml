@@ -17,6 +17,11 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+<dependency>
+    <groupId>net.sf.jasperreports</groupId>
+    <artifactId>jasperreports</artifactId>
+    <version>6.21.0</version> <!-- or latest -->
+</dependency>
 
 	<dependency>
 		<groupId>org.apache.commons</groupId>

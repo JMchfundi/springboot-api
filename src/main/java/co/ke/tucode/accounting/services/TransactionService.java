@@ -70,10 +70,9 @@ public class TransactionService {
         debitTransaction.setAmount(receiptPayload.getAmount());
         debitTransaction.setDescription(receiptPayload.getPaymentFor()+" "+receiptPayload.getReferenceNumber());
         debitTransaction.setType(TransactionType.DEBIT);
-        debitTransaction.setAccount(debitAccount);
         debitTransaction.setJournalEntry(journalEntry);
-        debitTransaction.setDebitAccountId(receiptPayload.getPaymentFor());
-        debitTransaction.setCreditAccountId(receiptPayload.getAccount());
+        debitTransaction.setDebitAccount(debitAccount);
+        debitTransaction.setCreditAccount(creditAccount);
 
         // Create a JsonObject for receipt details
         JsonObject receiptDetailsJson = Json.createObjectBuilder()
@@ -104,10 +103,9 @@ public class TransactionService {
         creditTransaction.setAmount(receiptPayload.getAmount());
         creditTransaction.setDescription(receiptPayload.getPaymentFor()+" "+receiptPayload.getReferenceNumber()); // You might need a different description
         creditTransaction.setType(TransactionType.CREDIT);
-        creditTransaction.setAccount(creditAccount);
         creditTransaction.setJournalEntry(journalEntry);
-        creditTransaction.setDebitAccountId(receiptPayload.getPaymentFor());
-        creditTransaction.setCreditAccountId(receiptPayload.getAccount());
+        creditTransaction.setDebitAccount(debitAccount);
+        creditTransaction.setCreditAccount(creditAccount);
 
         // Reuse the same JSON for credit transaction
         creditTransaction.setDetails(debitTransaction.getDetails());
