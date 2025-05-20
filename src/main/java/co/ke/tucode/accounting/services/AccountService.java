@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,16 +72,22 @@ public class AccountService {
         Account account = accountRepo.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        List<Transaction> transactions = new ArrayList<>();
-        transactions.addAll(account.getDebitTransactions());
-        transactions.addAll(account.getCreditTransactions());
+        // Use a Set to track unique transactions by their IDs or other unique
+        // attributes
+        Set<Transaction> uniqueTransactions = new HashSet<>();
 
-        // Sort transactions by JournalEntry date
+        // Add debit and credit transactions separately, but check for uniqueness
+        uniqueTransactions.addAll(account.getDebitTransactions());
+        uniqueTransactions.addAll(account.getCreditTransactions());
+
+        // Convert the Set to a List and sort it by the transaction date
+        List<Transaction> transactions = new ArrayList<>(uniqueTransactions);
         transactions.sort(Comparator.comparing(tx -> tx.getJournalEntry().getDate()));
 
         List<AccountStatementEntry> statement = new ArrayList<>();
         BigDecimal runningBalance = BigDecimal.ZERO;
 
+        // Process each unique transaction
         for (Transaction tx : transactions) {
             boolean isDebit = tx.getDebitAccount() != null && tx.getDebitAccount().getId().equals(accountId);
             boolean isCredit = tx.getCreditAccount() != null && tx.getCreditAccount().getId().equals(accountId);
