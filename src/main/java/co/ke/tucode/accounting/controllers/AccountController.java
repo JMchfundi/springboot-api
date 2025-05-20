@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import co.ke.tucode.accounting.entities.Account;
 import co.ke.tucode.accounting.entities.JournalEntry;
 import co.ke.tucode.accounting.entities.Transaction;
+import co.ke.tucode.accounting.payloads.AccountStatementEntry;
 import co.ke.tucode.accounting.services.AccountService;
 
 @RestController
@@ -49,5 +50,10 @@ public class AccountController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         accountService.deleteAccount(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{accountId}/statement")
+    public ResponseEntity<List<AccountStatementEntry>> getAccountStatement(@PathVariable Long accountId) {
+        return ResponseEntity.ok(accountService.generateAccountStatement(accountId));
     }
 }

@@ -1,5 +1,9 @@
 package co.ke.tucode.accounting.services;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import co.ke.tucode.accounting.entities.Account;
 import co.ke.tucode.accounting.entities.AccountType;
+import co.ke.tucode.accounting.entities.Transaction;
+import co.ke.tucode.accounting.payloads.AccountStatementEntry;
 import co.ke.tucode.accounting.repositories.AccountRepository;
 
 @Service
@@ -16,7 +22,7 @@ public class AccountService {
     private AccountRepository accountRepo;
 
     public Account createAccount(Account account) {
-                  String nextCode = generateNextCode(account.getType());
+        String nextCode = generateNextCode(account.getType());
         account.setCode(nextCode);
         return accountRepo.save(account);
     }
@@ -40,7 +46,7 @@ public class AccountService {
         accountRepo.deleteById(id);
     }
 
-        private String generateNextCode(AccountType type) {
+    private String generateNextCode(AccountType type) {
         int prefix = switch (type) {
             case ASSET -> 1;
             case LIABILITY -> 2;
@@ -59,4 +65,40 @@ public class AccountService {
             return prefix + "001"; // e.g., 1001
         }
     }
+
+    public List<AccountStatementEntry> generateAccountStatement(Long accountId) {
+        Account account = accountRepo.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.addAll(account.getDebitTransactions());
+        transactions.addAll(account.getCreditTransactions());
+
+        // Sort transactions by JournalEntry date
+        transactions.sort(Comparator.comparing(tx -> tx.getJournalEntry().getDate()));
+
+        List<AccountStatementEntry> statement = new ArrayList<>();
+        BigDecimal runningBalance = BigDecimal.ZERO;
+
+        for (Transaction tx : transactions) {
+            boolean isDebit = tx.getDebitAccount() != null && tx.getDebitAccount().getId().equals(accountId);
+            boolean isCredit = tx.getCreditAccount() != null && tx.getCreditAccount().getId().equals(accountId);
+
+            if (!isDebit && !isCredit)
+                continue;
+
+            LocalDate date = tx.getJournalEntry().getDate();
+            String description = tx.getDescription();
+            BigDecimal debit = isDebit ? tx.getAmount() : BigDecimal.ZERO;
+            BigDecimal credit = isCredit ? tx.getAmount() : BigDecimal.ZERO;
+
+            runningBalance = runningBalance.add(debit).subtract(credit);
+
+            AccountStatementEntry entry = new AccountStatementEntry(date, description, debit, credit, runningBalance);
+            statement.add(entry);
+        }
+
+        return statement;
+    }
+
 }
