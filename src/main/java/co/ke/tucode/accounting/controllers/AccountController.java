@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.ke.tucode.accounting.entities.Account;
-import co.ke.tucode.accounting.entities.JournalEntry;
-import co.ke.tucode.accounting.entities.Transaction;
 import co.ke.tucode.accounting.payloads.AccountStatementEntry;
 import co.ke.tucode.accounting.services.AccountService;
 
