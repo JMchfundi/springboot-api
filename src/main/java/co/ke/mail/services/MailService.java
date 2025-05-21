@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import co.ke.mail.beans.Mail;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class MailService {
@@ -31,6 +32,24 @@ public class MailService {
         mailSender.send(mailMessage);
 
     }
+
+    @PostConstruct
+public void testEmailSend() {
+    try {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("jakida@tucode.co.ke");
+        message.setTo("JMchfundi@gmail.com");
+        message.setSubject("SMTP Test from Spring Boot");
+        message.setText("Hello! This is a test email from your Spring Boot app using port 587 and STARTTLS.");
+
+        mailSender.send(message);
+
+        System.out.println("✅ Test email sent successfully!");
+    } catch (Exception e) {
+        System.err.println("❌ Test email failed: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
 
        // ✅ New method for sending credentials to an officer
     public void sendCredentials(String recipientEmail, String officerName, String username, String password) {
