@@ -36,4 +36,4 @@ build/
 derby.log
 mydb
 *.log
-uploads/
+uploads

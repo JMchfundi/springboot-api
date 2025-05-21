@@ -1,8 +1,10 @@
 package co.ke.tucode.accounting.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.ke.tucode.accounting.entities.Account;
@@ -51,7 +54,18 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}/statement")
-    public ResponseEntity<List<AccountStatementEntry>> getAccountStatement(@PathVariable Long accountId) {
-        return ResponseEntity.ok(accountService.generateAccountStatement(accountId));
+    public ResponseEntity<List<AccountStatementEntry>> getAccountStatement(
+            @PathVariable Long accountId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        // Ensure that startDate is not after endDate
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("startDate cannot be after endDate");
+        }
+
+        List<AccountStatementEntry> statement = accountService.generateAccountStatement(accountId, startDate, endDate);
+        return ResponseEntity.ok(statement);
     }
+
 }

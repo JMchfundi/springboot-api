@@ -68,49 +68,57 @@ public class AccountService {
         }
     }
 
-public List<AccountStatementEntry> generateAccountStatement(Long accountId) {
-    Account account = accountRepo.findById(accountId)
-            .orElseThrow(() -> new RuntimeException("Account not found"));
-
-    // Collect unique transactions the account is involved in
-    Set<Transaction> uniqueTransactions = new HashSet<>();
-    uniqueTransactions.addAll(account.getDebitTransactions());
-    uniqueTransactions.addAll(account.getCreditTransactions());
-
-    // Sort transactions by journal entry date (null-safe)
-    List<Transaction> transactions = new ArrayList<>(uniqueTransactions);
-    transactions.sort(Comparator.comparing(tx -> {
-        return tx.getJournalEntry() != null ? tx.getJournalEntry().getDate() : LocalDate.MIN;
-    }));
-
-    List<AccountStatementEntry> statement = new ArrayList<>();
-    BigDecimal runningBalance = BigDecimal.ZERO;
-
-    for (Transaction tx : transactions) {
-        Long debitId = tx.getDebitAccount() != null ? tx.getDebitAccount().getId() : null;
-        Long creditId = tx.getCreditAccount() != null ? tx.getCreditAccount().getId() : null;
-
-        boolean isDebit = accountId.equals(debitId);
-        boolean isCredit = accountId.equals(creditId);
-
-        // Skip if account not involved
-        if (!isDebit && !isCredit) continue;
-
-        // Skip internal transfer where account is both debit and credit
-        if (isDebit && isCredit) continue;
-
-        LocalDate date = tx.getJournalEntry() != null ? tx.getJournalEntry().getDate() : null;
-        String description = tx.getDescription();
-        BigDecimal debit = isDebit ? tx.getAmount() : BigDecimal.ZERO;
-        BigDecimal credit = isCredit ? tx.getAmount() : BigDecimal.ZERO;
-
-        runningBalance = runningBalance.add(debit).subtract(credit);
-
-        AccountStatementEntry entry = new AccountStatementEntry(date, description, debit, credit, runningBalance);
-        statement.add(entry);
+    public List<AccountStatementEntry> generateAccountStatement(Long accountId, LocalDate startDate, LocalDate endDate) {
+        Account account = accountRepo.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+    
+        // Collect unique transactions the account is involved in
+        Set<Transaction> uniqueTransactions = new HashSet<>();
+        uniqueTransactions.addAll(account.getDebitTransactions());
+        uniqueTransactions.addAll(account.getCreditTransactions());
+    
+        // Sort transactions by journal entry date (null-safe)
+        List<Transaction> transactions = new ArrayList<>(uniqueTransactions);
+        transactions.sort(Comparator.comparing(tx -> {
+            return tx.getJournalEntry() != null ? tx.getJournalEntry().getDate() : LocalDate.MIN;
+        }));
+    
+        List<AccountStatementEntry> statement = new ArrayList<>();
+        BigDecimal runningBalance = BigDecimal.ZERO;
+    
+        for (Transaction tx : transactions) {
+            Long debitId = tx.getDebitAccount() != null ? tx.getDebitAccount().getId() : null;
+            Long creditId = tx.getCreditAccount() != null ? tx.getCreditAccount().getId() : null;
+    
+            boolean isDebit = accountId.equals(debitId);
+            boolean isCredit = accountId.equals(creditId);
+    
+            // Skip if account not involved
+            if (!isDebit && !isCredit)
+                continue;
+    
+            // Skip internal transfer where account is both debit and credit
+            if (isDebit && isCredit)
+                continue;
+    
+            LocalDate date = tx.getJournalEntry() != null ? tx.getJournalEntry().getDate() : null;
+    
+            // Apply date filtering
+            if (date == null || date.isBefore(startDate) || date.isAfter(endDate))
+                continue;
+    
+            String description = tx.getDescription();
+            BigDecimal debit = isDebit ? tx.getAmount() : BigDecimal.ZERO;
+            BigDecimal credit = isCredit ? tx.getAmount() : BigDecimal.ZERO;
+    
+            runningBalance = runningBalance.add(debit).subtract(credit);
+    
+            AccountStatementEntry entry = new AccountStatementEntry(date, description, debit, credit, runningBalance);
+            statement.add(entry);
+        }
+    
+        return statement;
     }
-
-    return statement;
-}
+    
 
 }
