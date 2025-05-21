@@ -1,6 +1,8 @@
 package co.ke.finsis.controller;
+
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import co.ke.finsis.entity.OfficerRegistration;
 import co.ke.finsis.payload.OfficerRegistrationRequest;
 import co.ke.finsis.service.OfficerRegistrationService;
+import co.ke.mail.services.MailService;
 
 @RestController
 @RequestMapping("/api/officer")
@@ -15,9 +18,11 @@ import co.ke.finsis.service.OfficerRegistrationService;
 public class OfficerRegistrationController {
 
     private final OfficerRegistrationService service;
+    private final MailService mailService;
 
-    public OfficerRegistrationController(OfficerRegistrationService service) {
+    public OfficerRegistrationController(OfficerRegistrationService service, MailService mailService) {
         this.service = service;
+        this.mailService = mailService;
     }
 
     // CREATE
@@ -25,8 +30,7 @@ public class OfficerRegistrationController {
     public ResponseEntity<?> createOfficer(
             @RequestPart("data") OfficerRegistrationRequest request,
             @RequestPart("idDocument") MultipartFile idDocument,
-            @RequestPart("passportPhoto") MultipartFile passportPhoto
-    ) {
+            @RequestPart("passportPhoto") MultipartFile passportPhoto) {
         try {
             request.setIdDocument(idDocument);
             request.setPassportPhoto(passportPhoto);
@@ -58,8 +62,7 @@ public class OfficerRegistrationController {
             @PathVariable Long id,
             @RequestPart("data") OfficerRegistrationRequest request,
             @RequestPart(value = "idDocument", required = false) MultipartFile idDocument,
-            @RequestPart(value = "passportPhoto", required = false) MultipartFile passportPhoto
-    ) {
+            @RequestPart(value = "passportPhoto", required = false) MultipartFile passportPhoto) {
         try {
             request.setIdDocument(idDocument);
             request.setPassportPhoto(passportPhoto);
@@ -79,4 +82,16 @@ public class OfficerRegistrationController {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
+
+    @PostMapping("/send-credentials/{officerId}")
+    public ResponseEntity<?> sendCredentials(@PathVariable Long officerId) {
+        try {
+            mailService.sendCredentials(officerId);
+            return ResponseEntity.ok("Credentials sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to send email: " + e.getMessage());
+        }
+    }
+
 }

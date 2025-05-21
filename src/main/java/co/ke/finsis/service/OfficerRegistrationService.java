@@ -11,12 +11,9 @@ import co.ke.finsis.repository.OfficerRegistrationRepository;
 import co.ke.mail.services.MailService;
 import co.ke.tucode.systemuser.entities.Africana_User;
 import co.ke.tucode.systemuser.entities.Role;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,16 +32,14 @@ public class OfficerRegistrationService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-       public OfficerRegistrationService(
+    public OfficerRegistrationService(
             OfficerRegistrationRepository repository,
             PasswordEncoder passwordEncoder,
-            MailService mailService
-    ) {
+            MailService mailService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
     }
-
 
     public OfficerRegistration create(OfficerRegistrationRequest request) throws IOException {
         OfficerRegistration officer = mapRequestToEntity(request);
@@ -63,18 +58,13 @@ public class OfficerRegistrationService {
         officer.setSystemUser(user);
 
         // Save both using cascade
-        OfficerRegistration officerRegistration =  repository.save(officer);
-
-        mailService.sendCredentials(officer.getEmail(), officer.getFullName() ,generateUsername(officer), "Password@2906");
-        System.out.println("Officer account created successfully!");
-        return officerRegistration;
+        return repository.save(officer);
     }
 
     private String generateUsername(OfficerRegistration officer) {
-    // Generate username from email prefix or custom logic
-    return officer.getEmail().split("@")[0];
-}
-
+        // Generate username from email prefix or custom logic
+        return officer.getEmail().split("@")[0];
+    }
 
     public List<OfficerRegistration> getAll() {
         return repository.findAll();
