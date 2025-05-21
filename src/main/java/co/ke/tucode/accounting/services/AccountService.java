@@ -27,6 +27,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Service
 public class AccountService {
@@ -137,20 +138,25 @@ public class AccountService {
 
         return statement;
     }
-public byte[] generateLedgerReport(List<AccountStatementEntry> statementEntries) throws Exception {
-    try (InputStream reportStream = this.getClass().getResourceAsStream("/reports/ledger_report.jasper")) {
-        if (reportStream == null) {
-            throw new Exception("Could not find ledger_report.jasper in classpath!");
+
+    public byte[] generateLedgerReport(List<AccountStatementEntry> statementEntries) throws Exception {
+        try (InputStream reportStream = this.getClass().getResourceAsStream("/reports/ledger_report.jrxml")) {
+            if (reportStream == null) {
+                throw new Exception("Could not find ledger_report.jrxml in classpath!");
+            }
+    
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream); // ✅ Compiles at runtime
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(statementEntries);
+    
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("createdBy", "Your Company");
+    
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+            return JasperExportManager.exportReportToPdf(jasperPrint);
+        } catch (JRException e) {
+            System.err.println("JasperReports error: " + e.getMessage());
+            throw e;
         }
-        JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(statementEntries);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("createdBy", "Your Company");
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        return JasperExportManager.exportReportToPdf(jasperPrint);
-    } catch (JRException e) {
-        System.err.println("JasperReports error: " + e.getMessage());
-        throw e;
     }
-}
+    
 }
