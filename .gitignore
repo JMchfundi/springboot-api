@@ -33,6 +33,7 @@ build/
 .vscode/
 
 # External DB
+derby.log
 mydb
 *.log
 uploads/
