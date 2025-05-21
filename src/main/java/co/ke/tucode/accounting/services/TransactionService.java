@@ -66,7 +66,7 @@ public class TransactionService {
 
         Transaction transaction = new Transaction();
         transaction.setAmount(receiptPayload.getAmount());
-        transaction.setDescription(receiptPayload.getPaymentFor() + " " + receiptPayload.getReferenceNumber());
+        transaction.setDescription("From "+receiptPayload.getReceivedFrom() + " REF " + receiptPayload.getReferenceNumber());
         // transaction.setType(TransactionType.DEBIT); // optional; actual direction is
         // inferred from account roles
         transaction.setJournalEntry(journalEntry);
@@ -77,7 +77,7 @@ public class TransactionService {
         JsonObject receiptDetailsJson = Json.createObjectBuilder()
                 .add("receiptDate",
                         receiptPayload.getReceiptDate() != null ? receiptPayload.getReceiptDate().toString() : "")
-                .add("receivedFrom", receiptPayload.getPaymentFor())
+                .add("receivedFrom", receiptPayload.getReceivedFrom())
                 .add("amountInWords", receiptPayload.getAmountInWords())
                 .add("paymentFor", receiptPayload.getPaymentFor())
                 .add("paymentMethod", receiptPayload.getAccount())

@@ -10,7 +10,7 @@ public class ReceiptPayload {
     // private String receiptNo;
     private Long paymentFor;
     private LocalDate receiptDate;
-    // private String receivedFrom;
+    private String receivedFrom;
     private BigDecimal amount;
     private String amountInWords;
     private Long account;
