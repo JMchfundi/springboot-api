@@ -1,11 +1,14 @@
 package co.ke.tucode.accounting.services;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,13 @@ import co.ke.tucode.accounting.entities.JournalEntry;
 import co.ke.tucode.accounting.entities.Transaction;
 import co.ke.tucode.accounting.payloads.AccountStatementEntry;
 import co.ke.tucode.accounting.repositories.AccountRepository;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class AccountService {
@@ -127,5 +137,20 @@ public class AccountService {
 
         return statement;
     }
-
+public byte[] generateLedgerReport(List<AccountStatementEntry> statementEntries) throws Exception {
+    try (InputStream reportStream = this.getClass().getResourceAsStream("/reports/ledger_report.jasper")) {
+        if (reportStream == null) {
+            throw new Exception("Could not find ledger_report.jasper in classpath!");
+        }
+        JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(statementEntries);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("createdBy", "Your Company");
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    } catch (JRException e) {
+        System.err.println("JasperReports error: " + e.getMessage());
+        throw e;
+    }
+}
 }

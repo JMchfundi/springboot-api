@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,6 +70,21 @@ public class AccountController {
 
         List<AccountStatementEntry> statement = accountService.generateAccountStatement(accountId, startDate, endDate);
         return ResponseEntity.ok(statement);
+    }
+
+    @GetMapping("/report/ledger/{accountId}")
+    public ResponseEntity<byte[]> exportLedgerReport(@PathVariable Long accountId,
+    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws Exception {
+        List<AccountStatementEntry> entries = accountService.generateAccountStatement(accountId, startDate, endDate);
+        System.out.println("Entries: " + entries);
+        byte[] pdf = accountService.generateLedgerReport(entries);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.inline().filename("ledger.pdf").build());
+
+        return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
 
 }
