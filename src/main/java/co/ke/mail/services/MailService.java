@@ -46,14 +46,14 @@ public class MailService {
 
                 Your officer account has been created.
 
-                Username: %s
+                Usermail: %s
                 Password: %s
 
                 Please login and change your password after your first login.
 
                 Regards,
                 TRES Team
-                """.formatted(officer.getFullName(), officer.getSystemUser().getUsername(), "Password@2906");
+                """.formatted(officer.getFullName(), officer.getSystemUser().getEmail(), "Password@2906");
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(mailFrom);
