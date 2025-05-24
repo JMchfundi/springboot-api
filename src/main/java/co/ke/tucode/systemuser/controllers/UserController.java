@@ -1,60 +1,33 @@
 package co.ke.tucode.systemuser.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import co.ke.tucode.configjwt.JwtAuthenticationFilter;
 //import co.ke.tucode.africana_api.services.FilePreview;
 import co.ke.tucode.configjwt.TokenProviderTuCode;
 import co.ke.tucode.systemuser.entities.Africana_User;
-import co.ke.tucode.systemuser.entities.CitizenCategory;
-import co.ke.tucode.systemuser.entities.DocUpload;
-import co.ke.tucode.systemuser.entities.Employment_Details;
-import co.ke.tucode.systemuser.entities.Employment_DetailsPayload;
-import co.ke.tucode.systemuser.entities.Family_Residence;
-import co.ke.tucode.systemuser.entities.Next_Of_Kin;
-import co.ke.tucode.systemuser.entities.Ownership_Prefference;
-import co.ke.tucode.systemuser.entities.Personal_Info;
 import co.ke.tucode.systemuser.entities.Role;
-import co.ke.tucode.systemuser.entities.UserRole;
-import co.ke.tucode.systemuser.payloads.CitizenCategoryPayload;
-import co.ke.tucode.systemuser.payloads.Family_ResidencePayload;
 import co.ke.tucode.systemuser.payloads.LoginRequest;
-import co.ke.tucode.systemuser.payloads.Next_Of_KinPayload;
-import co.ke.tucode.systemuser.payloads.Ownership_PrefferencePayload;
-import co.ke.tucode.systemuser.payloads.Personal_InfoPayload;
 import co.ke.tucode.systemuser.repositories.CitizenCategoryRepository;
 import co.ke.tucode.systemuser.repositories.Employment_DetailsRepository;
 import co.ke.tucode.systemuser.repositories.Family_ResidenceRepository;
 import co.ke.tucode.systemuser.repositories.Next_Of_KinRepository;
 import co.ke.tucode.systemuser.repositories.Ownership_PrefferenceRepository;
 import co.ke.tucode.systemuser.repositories.Personal_InfoRepository;
-import co.ke.tucode.systemuser.repositories.UserRoleRepository;
 import co.ke.tucode.systemuser.services.Africana_UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 // @RequestMapping
@@ -247,4 +220,22 @@ public class UserController {
 
         return new ResponseEntity("db data erased", HttpStatus.NO_CONTENT);
     }
+
+
+@GetMapping("/current_user")
+public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+    String email = userDetails.getUsername(); // Extract email from token
+
+    List<Africana_User> users = service.findByEmail(email);
+
+    if (users == null || users.isEmpty()) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body("User not found with email: " + email);
+    }
+
+    // Safe to call .get(0) now
+    return ResponseEntity.ok(users.get(0));
+}
+
 }
