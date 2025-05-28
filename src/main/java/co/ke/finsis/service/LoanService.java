@@ -9,10 +9,13 @@ import co.ke.finsis.payload.LoanPayload;
 import co.ke.finsis.repository.LoanRepository;
 import co.ke.finsis.repository.LoanTypeRepository;
 import co.ke.tucode.approval.entities.ApprovalRequest;
+import co.ke.tucode.approval.entities.ApprovalStep;
 import co.ke.tucode.approval.services.ApprovalService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,26 +128,46 @@ public class LoanService {
     }
 
     public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
+    // Log the incoming approverId for verification
+    System.out.println("Fetching loans pending approval for Approver ID: " + approverId);
+
     return loanRepository.findAll().stream()
-            .filter(loan -> {
-                ApprovalRequest request = loan.getApprovalRequest();
+        .filter(loan -> {
+            ApprovalRequest request = loan.getApprovalRequest();
 
-                // Validate that this loan has an approval request in PENDING status
-                if (request == null || !"PENDING".equalsIgnoreCase(request.getStatus())) {
-                    return false;
-                }
+            // Check if loan has an approval request
+            if (request == null) {
+                System.out.println("Loan " + loan.getId() + " has no approval request.");
+                return false;
+            }
 
-                // Get the first step that is still pending (ordered by stepOrder)
-                return request.getSteps().stream()
-                        .filter(step -> "PENDING".equalsIgnoreCase(step.getStatus()))
-                        .sorted((s1, s2) -> Integer.compare(s1.getStepOrder(), s2.getStepOrder()))
-                        .findFirst()
-                        .map(step -> step.getApprover() != null &&
-                                step.getApprover().getId().equals(approverId))
-                        .orElse(false);
-            })
-            .map(this::mapToPayload)
-            .collect(Collectors.toList());
+            // Check if the approval request is in PENDING status
+            String requestStatus = request.getStatus();
+            if (!"PENDING".equalsIgnoreCase(requestStatus)) {
+                System.out.println("Loan " + loan.getId() + " has approval request status: " + requestStatus);
+                return false;
+            }
+
+            // Find the first pending step
+            Optional<ApprovalStep> firstPendingStep = request.getSteps().stream()
+                .filter(step -> "PENDING".equalsIgnoreCase(step.getStatus()))
+                .sorted(Comparator.comparingInt(ApprovalStep::getStepOrder))
+                .findFirst();
+
+            if (firstPendingStep.isPresent()) {
+                ApprovalStep step = firstPendingStep.get();
+                Integer stepApproverId = step.getApprover() != null ? step.getApprover().getId() : null;
+
+                System.out.println("Loan " + loan.getId() + " - First pending step approver ID: " + stepApproverId);
+
+                return stepApproverId != null && stepApproverId.equals(approverId);
+            } else {
+                System.out.println("Loan " + loan.getId() + " has no pending steps.");
+                return false;
+            }
+        })
+        .map(this::mapToPayload)
+        .collect(Collectors.toList());
 }
 
 }
