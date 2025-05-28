@@ -1,13 +1,15 @@
 package co.ke.finsis.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import co.ke.finsis.entity.LoanType;
 import co.ke.finsis.payload.LoanTypeDto;
 import co.ke.finsis.repository.LoanTypeRepository;
+import co.ke.tucode.approval.entities.ApprovalRequest;
+import co.ke.tucode.approval.services.ApprovalService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -15,15 +17,30 @@ import java.util.stream.Collectors;
 public class LoanTypeService {
 
     private final LoanTypeRepository repository;
+    private final ApprovalService approvalService;
 
     public LoanTypeDto create(LoanTypeDto dto) {
-        LoanType saved = repository.save(toEntity(dto));
+        if (dto.getRequestedByUserId() == null || dto.getApproverUserIds() == null || dto.getApproverUserIds().isEmpty()) {
+            throw new IllegalArgumentException("RequestedByUserId and approverUserIds must be provided");
+        }
+
+        ApprovalRequest approvalRequest = approvalService.createApprovalRequest(
+                "Create Loan Type: " + dto.getName(),
+                "Approval for creation of loan type: " + dto.getDescription(),
+                dto.getRequestedByUserId(),
+                dto.getApproverUserIds()
+        );
+
+        LoanType loanType = toEntity(dto);
+        loanType.setApprovalRequest(approvalRequest);
+
+        LoanType saved = repository.save(loanType);
         return toDto(saved);
     }
 
     public LoanTypeDto getById(Long id) {
         LoanType loanType = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Loan type not found"));
+                .orElseThrow(() -> new NoSuchElementException("Loan type not found"));
         return toDto(loanType);
     }
 
@@ -33,13 +50,27 @@ public class LoanTypeService {
 
     public LoanTypeDto update(Long id, LoanTypeDto dto) {
         LoanType existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Loan type not found"));
-        dto.setId(id); // Ensure ID is preserved
+                .orElseThrow(() -> new NoSuchElementException("Loan type not found"));
+
+        if (existing.getApprovalRequest() != null &&
+            !"APPROVED".equals(existing.getApprovalRequest().getStatus())) {
+            throw new IllegalStateException("Cannot update loan type until approval is complete.");
+        }
+
+        dto.setId(id);
         LoanType updated = repository.save(toEntity(dto));
         return toDto(updated);
     }
 
     public void delete(Long id) {
+        LoanType existing = repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Loan type not found"));
+
+        if (existing.getApprovalRequest() != null &&
+            !"APPROVED".equals(existing.getApprovalRequest().getStatus())) {
+            throw new IllegalStateException("Cannot delete loan type until approval is complete.");
+        }
+
         repository.deleteById(id);
     }
 
@@ -56,6 +87,7 @@ public class LoanTypeService {
                 .lafDefault(entity.getLafDefault())
                 .insuranceFeeDefault(entity.getInsuranceFeeDefault())
                 .processingFeeDefault(entity.getProcessingFeeDefault())
+                .approvalStatus(entity.getApprovalRequest() != null ? entity.getApprovalRequest().getStatus() : "NOT_REQUIRED")
                 .build();
     }
 

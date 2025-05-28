@@ -2,12 +2,13 @@ package co.ke.finsis.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import co.ke.tucode.approval.entities.ApprovalRequest;
+import co.ke.tucode.systemuser.entities.Africana_User;
 
 @Entity
 @Table(name = "loan_types")
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @AllArgsConstructor
 @Builder
 public class LoanType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,4 +32,18 @@ public class LoanType {
     private BigDecimal lafDefault;
     private BigDecimal insuranceFeeDefault;
     private BigDecimal processingFeeDefault;
+
+ @OneToOne(cascade = CascadeType.ALL)
+@JoinColumn(name = "approval_request_id")
+@JsonManagedReference
+private ApprovalRequest approvalRequest;
+
+
+    @ManyToMany
+    @JoinTable(
+        name = "loan_type_approvers",
+        joinColumns = @JoinColumn(name = "loan_type_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<Africana_User> approvers;
 }

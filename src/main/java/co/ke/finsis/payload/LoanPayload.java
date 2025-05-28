@@ -12,7 +12,11 @@ import java.util.List;
 public class LoanPayload {
     private Long id;
     private String idNumber;
-    private String loanType;
+
+    // Changed: originally was just a string, now we carry the loanTypeId + name
+    private Long loanTypeId;
+    private String loanTypeName; // optional, for display only
+
     private Double principalAmount;
     private Double interestRate;
     private Integer loanTerm;
@@ -32,4 +36,10 @@ public class LoanPayload {
 
     private List<String> paymentMethods;
     private String repaymentAccount;
+
+    // New: User applying for this loan
+    private Integer requestedByUserId;
+
+    // New: To expose approval status (e.g., PENDING, APPROVED)
+    private String approvalStatus;
 }

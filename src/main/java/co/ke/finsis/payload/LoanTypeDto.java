@@ -1,8 +1,8 @@
 package co.ke.finsis.payload;
 
 import lombok.*;
-
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +20,9 @@ public class LoanTypeDto {
     private BigDecimal lafDefault;
     private BigDecimal insuranceFeeDefault;
     private BigDecimal processingFeeDefault;
+
+    private Integer requestedByUserId;
+    private List<Integer> approverUserIds;
+
+    private String approvalStatus;
 }

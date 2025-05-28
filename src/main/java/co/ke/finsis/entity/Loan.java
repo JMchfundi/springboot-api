@@ -2,9 +2,9 @@ package co.ke.finsis.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDate;
 import java.util.List;
+import co.ke.tucode.approval.entities.ApprovalRequest;
 
 @Entity
 @Data
@@ -18,7 +18,7 @@ public class Loan {
     private Long id;
 
     private String idNumber;
-    private String loanType;
+
     private Double principalAmount;
     private Double interestRate;
     private Integer loanTerm;
@@ -40,4 +40,12 @@ public class Loan {
     private List<String> paymentMethods;
 
     private String repaymentAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "loan_type_id")
+    private LoanType loanType;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "approval_request_id")
+    private ApprovalRequest approvalRequest;
 }
