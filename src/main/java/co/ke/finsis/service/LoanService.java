@@ -123,4 +123,28 @@ public class LoanService {
                 .approvalStatus(loan.getApprovalRequest().getStatus())
                 .build();
     }
+
+    public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
+    return loanRepository.findAll().stream()
+            .filter(loan -> {
+                ApprovalRequest request = loan.getApprovalRequest();
+
+                // Validate that this loan has an approval request in PENDING status
+                if (request == null || !"PENDING".equalsIgnoreCase(request.getStatus())) {
+                    return false;
+                }
+
+                // Get the first step that is still pending (ordered by stepOrder)
+                return request.getSteps().stream()
+                        .filter(step -> "PENDING".equalsIgnoreCase(step.getStatus()))
+                        .sorted((s1, s2) -> Integer.compare(s1.getStepOrder(), s2.getStepOrder()))
+                        .findFirst()
+                        .map(step -> step.getApprover() != null &&
+                                step.getApprover().getId().equals(approverId))
+                        .orElse(false);
+            })
+            .map(this::mapToPayload)
+            .collect(Collectors.toList());
+}
+
 }

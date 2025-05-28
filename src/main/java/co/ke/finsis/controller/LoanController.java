@@ -41,4 +41,10 @@ public class LoanController {
         loanService.deleteLoan(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/pending-approval")
+public ResponseEntity<List<LoanPayload>> getLoansPendingApproval(@RequestParam Long approverId) {
+    return ResponseEntity.ok(loanService.getLoansPendingApprovalByUser(approverId));
+}
+
 }
