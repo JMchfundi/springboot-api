@@ -33,12 +33,6 @@ public class LoanType {
     private BigDecimal insuranceFeeDefault;
     private BigDecimal processingFeeDefault;
 
- @OneToOne(cascade = CascadeType.ALL)
-@JoinColumn(name = "approval_request_id")
-@JsonManagedReference
-private ApprovalRequest approvalRequest;
-
-
     @ManyToMany
     @JoinTable(
         name = "loan_type_approvers",
