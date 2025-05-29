@@ -42,8 +42,8 @@ public class LoanController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/pending-approval/{approverId}")
-public ResponseEntity<List<LoanPayload>> getLoansPendingApproval(@PathVariable Long approverId) {
+    @GetMapping("/pending-approval")
+public ResponseEntity<List<LoanPayload>> getLoansPendingApproval(@RequestParam Long approverId) {
     return ResponseEntity.ok(loanService.getLoansPendingApprovalByUser(approverId));
 }
 

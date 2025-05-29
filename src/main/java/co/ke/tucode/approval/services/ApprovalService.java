@@ -23,7 +23,7 @@ public class ApprovalService {
     private final ApprovalStepRepository approvalStepRepository;
 
     @Transactional
-    public ApprovalRequest createApprovalRequest(String title, String description, Integer requestedByUserId, List<Integer> approverUserIds) {
+    public ApprovalRequest createApprovalRequest(String title, String description, Long requestedByUserId, List<Long> approverUserIds) {
         Africana_User requestedBy = userRepository.findById(requestedByUserId)
                 .orElseThrow(() -> new NoSuchElementException("Requesting user not found"));
 

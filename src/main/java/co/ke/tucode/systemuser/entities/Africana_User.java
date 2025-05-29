@@ -25,7 +25,7 @@ public class Africana_User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotEmpty
     private String username;

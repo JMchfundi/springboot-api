@@ -21,5 +21,5 @@ public class LoanTypeDto {
     private BigDecimal insuranceFeeDefault;
     private BigDecimal processingFeeDefault;
 
-    private List<Integer> approverUserIds;
+    private List<Long> approverUserIds;
 }

@@ -42,6 +42,7 @@ public class LoanService {
         // 3. Build Loan entity
         Loan loan = mapToEntity(payload);
         loan.setLoanType(loanType);
+        System.out.println("Creating loan approval request: " + approvalRequest.getId());
         loan.setApprovalRequest(approvalRequest);
 
         // 4. Save and return
@@ -126,6 +127,7 @@ public class LoanService {
                 .approvalStatus(loan.getApprovalRequest().getStatus())
                 .build();
     }
+    
     public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
     System.out.println("Fetching loans pending approval for Approver ID: " + approverId);
 
@@ -155,7 +157,7 @@ public class LoanService {
 
             if (firstPendingStep.isPresent()) {
                 ApprovalStep step = firstPendingStep.get();
-                Integer stepApproverId = step.getApprover() != null ? step.getApprover().getId() : null;
+                Long stepApproverId = step.getApprover() != null ? step.getApprover().getId() : null;
                 System.out.println("Loan " + loan.getId() + " first pending step approver ID: " + stepApproverId);
 
                 boolean match = stepApproverId != null && stepApproverId.equals(approverId);

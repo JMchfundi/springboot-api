@@ -38,7 +38,7 @@ public class LoanPayload {
     private String repaymentAccount;
 
     // New: User applying for this loan
-    private Integer requestedByUserId;
+    private Long requestedByUserId;
 
     // New: To expose approval status (e.g., PENDING, APPROVED)
     private String approvalStatus;

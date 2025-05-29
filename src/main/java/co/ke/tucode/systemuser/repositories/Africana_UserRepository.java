@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import co.ke.tucode.systemuser.entities.Africana_User;
 
-public interface Africana_UserRepository extends JpaRepository<Africana_User, Integer> {
+public interface Africana_UserRepository extends JpaRepository<Africana_User, Long> {
     public List<Africana_User> findByEmail(String email);
     public boolean existsByEmail(String email); 
     public void deleteByEmail(String email);  
