@@ -129,22 +129,18 @@ public class LoanService {
     }
     
     public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
-    System.out.println("Fetching loans pending approval for Approver ID: " + approverId);
 
     List<Loan> allLoans = loanRepository.findAll();
-    System.out.println("Total loans fetched from repository: " + allLoans.size());
 
     List<LoanPayload> filteredLoans = allLoans.stream()
         .filter(loan -> {
             ApprovalRequest request = loan.getApprovalRequest();
 
             if (request == null) {
-                System.out.println("Loan " + loan.getId() + " has no approval request.");
                 return false;
             }
 
             String requestStatus = request.getStatus();
-            System.out.println("Loan " + loan.getId() + " approval request status: " + requestStatus);
 
             if (!"PENDING".equalsIgnoreCase(requestStatus)) {
                 return false;
@@ -158,23 +154,18 @@ public class LoanService {
             if (firstPendingStep.isPresent()) {
                 ApprovalStep step = firstPendingStep.get();
                 Long stepApproverId = step.getApprover() != null ? step.getApprover().getId() : null;
-                System.out.println("Loan " + loan.getId() + " first pending step approver ID: " + stepApproverId);
-
+        
                 boolean match = stepApproverId != null && stepApproverId.equals(approverId);
-                System.out.println("Does approver ID match? " + match);
                 return match;
             } else {
-                System.out.println("Loan " + loan.getId() + " has no pending approval steps.");
                 return false;
             }
         })
         .map(loan -> {
-            System.out.println("Loan " + loan.getId() + " passed filter for approver " + approverId);
             return mapToPayload(loan);
         })
         .collect(Collectors.toList());
 
-    System.out.println("Total loans pending approval for user " + approverId + ": " + filteredLoans.size());
     return filteredLoans;
 }
 
