@@ -127,12 +127,53 @@ public class LoanService {
                 .approvalStatus(loan.getApprovalRequest().getStatus())
                 .build();
     }
-
-    public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
-        return loanRepository.findLoansPendingApprovalByApprover(approverId)
-            .stream()
-            .map(this::mapToPayload)
-            .collect(Collectors.toList());
-    }
     
+    public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
+
+    List<Loan> allLoans = loanRepository.findAll();
+
+    List<LoanPayload> filteredLoans = allLoans.stream()
+        .filter(loan -> {
+            ApprovalRequest request = loan.getApprovalRequest();
+
+            if (request == null) {
+                return false;
+            }
+
+            String requestStatus = request.getStatus();
+
+            if (!"PENDING".equalsIgnoreCase(requestStatus)) {
+                return false;
+            }
+
+            Optional<ApprovalStep> firstPendingStep = request.getSteps().stream()
+                .filter(step -> "PENDING".equalsIgnoreCase(step.getStatus()))
+                .sorted(Comparator.comparingInt(ApprovalStep::getStepOrder))
+                .findFirst();
+
+            if (firstPendingStep.isPresent()) {
+                ApprovalStep step = firstPendingStep.get();
+                Long stepApproverId = step.getApprover() != null ? step.getApprover().getId() : null;
+        
+                boolean match = stepApproverId != null && stepApproverId.equals(approverId);
+                return match;
+            } else {
+                return false;
+            }
+        })
+        .map(loan -> {
+            return mapToPayload(loan);
+        })
+        .collect(Collectors.toList());
+
+    return filteredLoans;
+}
+
+// public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
+//     return loanRepository.findLoansPendingApprovalByApprover(approverId)
+//         .stream()
+//         .map(this::mapToPayload)
+//         .collect(Collectors.toList());
+// }
+
 }
