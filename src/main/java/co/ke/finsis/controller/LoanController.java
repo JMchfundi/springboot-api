@@ -36,6 +36,13 @@ public class LoanController {
         return ResponseEntity.ok(loanService.updateLoan(id, loanPayload));
     }
 
+    @PutMapping("/update-loan-approval-status/{id}")
+    public ResponseEntity<LoanPayload> updateLoanApprovalStatus(
+            @PathVariable Long id,
+            @RequestBody LoanPayload loanPayload) {
+        return ResponseEntity.ok(loanService.updateLoanApprovalStatus(id, loanPayload));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
         loanService.deleteLoan(id);
@@ -43,8 +50,8 @@ public class LoanController {
     }
 
     @GetMapping("/pending-approval")
-public ResponseEntity<List<LoanPayload>> getLoansPendingApproval(@RequestParam Long approverId) {
-    return ResponseEntity.ok(loanService.getLoansPendingApprovalByUser(approverId));
-}
+    public ResponseEntity<List<LoanPayload>> getLoansPendingApproval(@RequestParam Long approverId) {
+        return ResponseEntity.ok(loanService.getLoansPendingApprovalByUser(approverId));
+    }
 
 }

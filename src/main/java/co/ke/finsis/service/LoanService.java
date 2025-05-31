@@ -74,6 +74,20 @@ public class LoanService {
         return mapToPayload(loanRepository.save(updated));
     }
 
+        public LoanPayload updateLoanApprovalStatus(Long id, LoanPayload payload) {
+        Loan existing = loanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + id));
+
+        ApprovalRequest approvalRequest = existing.getApprovalRequest();
+        approvalRequest.setStatus(payload.getApprovalStatus()); // update approval status
+
+        Loan updated = mapToEntity(payload);
+        updated.setId(existing.getId());
+        updated.setLoanType(existing.getLoanType()); // preserve LoanType
+        updated.setApprovalRequest(approvalRequest); // preserve approval trail
+        return mapToPayload(loanRepository.save(updated));
+    }
+
     public void deleteLoan(Long id) {
         loanRepository.deleteById(id);
     }
