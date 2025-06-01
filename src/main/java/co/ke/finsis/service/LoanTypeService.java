@@ -3,6 +3,9 @@ package co.ke.finsis.service;
 import co.ke.finsis.entity.LoanType;
 import co.ke.finsis.payload.LoanTypeDto;
 import co.ke.finsis.repository.LoanTypeRepository;
+import co.ke.tucode.accounting.entities.Account;
+import co.ke.tucode.accounting.entities.AccountType;
+import co.ke.tucode.accounting.services.AccountService;
 import co.ke.tucode.systemuser.entities.Africana_User;
 import co.ke.tucode.systemuser.repositories.Africana_UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +20,25 @@ import java.util.stream.Collectors;
 public class LoanTypeService {
 
     private final LoanTypeRepository repository;
-    // Inject userRepository
     private final Africana_UserRepository userRepository;
+    private final AccountService accountService;
 
     public LoanTypeDto create(LoanTypeDto dto) {
         LoanType loanType = toEntity(dto);
+
+        // Step 1: Create associated account
+        Account account = new Account();
+        account.setName(loanType.getName()+ " - Product Type");
+        account.setType(AccountType.ASSET); // Loans are assets (money owed to organization)
+
+        Account savedAccount = accountService.createAccount(account);
+
+        // Step 2: Link account to loan type
+        loanType.setAccountId(savedAccount.getId());
+
+        // Step 3: Save loan type
         LoanType saved = repository.save(loanType);
+
         return toDto(saved);
     }
 
@@ -48,7 +64,6 @@ public class LoanTypeService {
     public void delete(Long id) {
         LoanType existing = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Loan type not found"));
-
         repository.deleteById(id);
     }
 
@@ -65,6 +80,7 @@ public class LoanTypeService {
                 .lafDefault(entity.getLafDefault())
                 .insuranceFeeDefault(entity.getInsuranceFeeDefault())
                 .processingFeeDefault(entity.getProcessingFeeDefault())
+                .accountId(entity.getAccountId()) // include this in DTO
                 .approverUserIds(entity.getApprovers() != null
                         ? entity.getApprovers().stream().map(Africana_User::getId).collect(Collectors.toList())
                         : List.of())
@@ -91,8 +107,8 @@ public class LoanTypeService {
                 .lafDefault(dto.getLafDefault())
                 .insuranceFeeDefault(dto.getInsuranceFeeDefault())
                 .processingFeeDefault(dto.getProcessingFeeDefault())
+                .accountId(dto.getAccountId()) // preserve existing accountId on update
                 .approvers(approvers)
                 .build();
     }
-
 }

@@ -4,6 +4,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+import jakarta.persistence.Column;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +22,10 @@ public class LoanTypeDto {
     private BigDecimal lafDefault;
     private BigDecimal insuranceFeeDefault;
     private BigDecimal processingFeeDefault;
+
+    @Column(name = "account_id")
+private Long accountId;
+
 
     private List<Long> approverUserIds;
 }

@@ -33,11 +33,10 @@ public class LoanType {
     private BigDecimal insuranceFeeDefault;
     private BigDecimal processingFeeDefault;
 
+    @Column(name = "account_id")
+    private Long accountId;
+
     @ManyToMany
-    @JoinTable(
-        name = "loan_type_approvers",
-        joinColumns = @JoinColumn(name = "loan_type_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "loan_type_approvers", joinColumns = @JoinColumn(name = "loan_type_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Africana_User> approvers;
 }
