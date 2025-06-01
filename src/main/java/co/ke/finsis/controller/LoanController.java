@@ -54,4 +54,15 @@ public class LoanController {
         return ResponseEntity.ok(loanService.getLoansPendingApprovalByUser(approverId));
     }
 
+    // ✅ NEW: Get fully approved loans
+    @GetMapping("/approved")
+    public ResponseEntity<List<LoanPayload>> getApprovedLoans() {
+        return ResponseEntity.ok(loanService.getFullyApprovedLoans());
+    }
+
+    @PostMapping("/disburse/{loanId}")
+    public ResponseEntity<LoanPayload> disburseLoan(@PathVariable Long loanId) {
+    return ResponseEntity.ok(loanService.disburseLoan(loanId));
+}
+
 }

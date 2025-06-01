@@ -1,17 +1,26 @@
 package co.ke.finsis.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties.RSocket.Client;
 import org.springframework.stereotype.Service;
 
+import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.entity.Loan;
 import co.ke.finsis.entity.LoanType;
 import co.ke.finsis.payload.LoanPayload;
+import co.ke.finsis.repository.ClientInfoRepository;
 import co.ke.finsis.repository.LoanRepository;
 import co.ke.finsis.repository.LoanTypeRepository;
+import co.ke.tucode.accounting.payloads.ReceiptPayload;
+import co.ke.tucode.accounting.repositories.AccountRepository;
+import co.ke.tucode.accounting.services.TransactionService;
 import co.ke.tucode.approval.entities.ApprovalRequest;
 import co.ke.tucode.approval.entities.ApprovalStep;
 import co.ke.tucode.approval.services.ApprovalService;
+import jakarta.transaction.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,6 +34,9 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final LoanTypeRepository loanTypeRepository;
     private final ApprovalService approvalService;
+    private final TransactionService transactionService; // Inject transaction service
+    private final ClientInfoRepository clientInfoRepository; // Inject account repository
+
 
     public LoanPayload createLoan(LoanPayload payload) {
         // 1. Fetch LoanType
@@ -182,6 +194,47 @@ public class LoanService {
 
     return filteredLoans;
 }
+
+public List<LoanPayload> getFullyApprovedLoans() {
+    return loanRepository.findAll().stream()
+            .filter(loan -> loan.getApprovalRequest() != null &&
+                    "APPROVED".equalsIgnoreCase(loan.getApprovalRequest().getStatus()))
+            .map(this::mapToPayload)
+            .collect(Collectors.toList());
+}
+
+@Transactional
+public LoanPayload disburseLoan(Long loanId) {
+    Loan loan = loanRepository.findById(loanId)
+            .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + loanId));
+
+    if (loan.getApprovalRequest() == null || !"APPROVED".equalsIgnoreCase(loan.getApprovalRequest().getStatus())) {
+        throw new IllegalStateException("Loan is not fully approved for disbursement");
+    }
+
+    ClientInfo clientInfo = clientInfoRepository.findByIdNumber(loan.getIdNumber())
+            .orElseThrow(() -> new RuntimeException("Client not found with ID Number: " + loan.getIdNumber())); 
+
+    // Create ReceiptPayload from loan data
+    ReceiptPayload receiptPayload = new ReceiptPayload();
+    receiptPayload.setAmount(BigDecimal.valueOf(loan.getPrincipalAmount()));
+    receiptPayload.setReceivedFrom("Loan Client: " + loan.getIdNumber());
+    receiptPayload.setReferenceNumber("LOAN-" + loan.getId()); // Or a UUID/timestamp
+    receiptPayload.setReceiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate());
+    receiptPayload.setAccount(loan.getLoanType().getAccountId()); // CREDIT ACCOUNT: Disbursing from
+    // System.out.println("Disbursing loan with ID: " + loan.getIdNumber());
+    receiptPayload.setPaymentFor(clientInfo.getAccountId()); // DEBIT ACCOUNT: Client’s loan/receivable account
+
+    // Perform accounting entry
+    transactionService.saveReceipt(receiptPayload);
+
+    // Optionally update status to DISBURSED
+    loan.getApprovalRequest().setStatus("DISBURSED");
+    loanRepository.save(loan);
+
+    return mapToPayload(loan);
+}
+
 
 // public List<LoanPayload> getLoansPendingApprovalByUser(Long approverId) {
 //     return loanRepository.findLoansPendingApprovalByApprover(approverId)

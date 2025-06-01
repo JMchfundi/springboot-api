@@ -66,7 +66,8 @@ public class TransactionService {
 
         Transaction transaction = new Transaction();
         transaction.setAmount(receiptPayload.getAmount());
-        transaction.setDescription("From "+receiptPayload.getReceivedFrom() + " REF " + receiptPayload.getReferenceNumber());
+        transaction.setDescription(
+                "From " + receiptPayload.getReceivedFrom() + " REF " + receiptPayload.getReferenceNumber());
         // transaction.setType(TransactionType.DEBIT); // optional; actual direction is
         // inferred from account roles
         transaction.setJournalEntry(journalEntry);
@@ -74,16 +75,21 @@ public class TransactionService {
         transaction.setCreditAccount(creditAccount);
 
         // Add receipt details
-        JsonObject receiptDetailsJson = Json.createObjectBuilder()
-                .add("receiptDate",
-                        receiptPayload.getReceiptDate() != null ? receiptPayload.getReceiptDate().toString() : "")
-                .add("receivedFrom", receiptPayload.getReceivedFrom())
-                .add("amountInWords", receiptPayload.getAmountInWords())
-                .add("paymentFor", receiptPayload.getPaymentFor())
-                .add("paymentMethod", receiptPayload.getAccount())
-                .add("referenceNumber", receiptPayload.getReferenceNumber())
-                .add("schemaVersion", 2)
-                .build();
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+
+        builder.add("receiptDate",
+                receiptPayload.getReceiptDate() != null ? receiptPayload.getReceiptDate().toString() : "");
+        builder.add("receivedFrom", receiptPayload.getReceivedFrom() != null ? receiptPayload.getReceivedFrom() : "");
+        builder.add("amountInWords",
+                receiptPayload.getAmountInWords() != null ? receiptPayload.getAmountInWords() : "");
+        builder.add("paymentFor",
+                receiptPayload.getPaymentFor() != null ? receiptPayload.getPaymentFor().toString() : "");
+        builder.add("paymentMethod", receiptPayload.getAccount() != null ? receiptPayload.getAccount().toString() : "");
+        builder.add("referenceNumber",
+                receiptPayload.getReferenceNumber() != null ? receiptPayload.getReferenceNumber() : "");
+        builder.add("schemaVersion", 2);
+
+        JsonObject receiptDetailsJson = builder.build();
 
         StringWriter stringWriter = new StringWriter();
         try (JsonWriter jsonWriter = Json.createWriter(stringWriter)) {
