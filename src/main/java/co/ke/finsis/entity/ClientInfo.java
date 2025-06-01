@@ -15,7 +15,7 @@ public class ClientInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Step 1: Personal Information
+    // Personal Information
     @NotBlank(message = "Full Name is required")
     private String fullName;
 
@@ -48,7 +48,7 @@ public class ClientInfo {
     @NotBlank(message = "Group is required")
     private String group;
 
-    // Step 2: Next of Kin
+    // Next of Kin
     @NotBlank(message = "Next of Kin Name is required")
     private String nokName;
 
@@ -64,12 +64,15 @@ public class ClientInfo {
     @NotBlank(message = "Next of Kin ID Number is required")
     private String nokIdNumber;
 
-    // Step 3: File Paths (to save file locations in the database)
+    // File Paths
     private String idDocumentPath;
-
     private String passportPhotoPath;
 
-    // Transient fields for handling file upload in memory (do not persist these fields)
+    // Link to account (savings)
+    @Column(name = "account_id")
+    private Long accountId;
+
+    // Transient fields (not persisted)
     @Transient
     private MultipartFile idDocument;
 

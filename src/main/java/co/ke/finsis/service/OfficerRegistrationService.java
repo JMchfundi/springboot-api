@@ -46,7 +46,7 @@ public class OfficerRegistrationService {
 
         // Create system user account
         Africana_User user = Africana_User.builder()
-                .username(generateUsername(officer))
+                .username(request.getFullName())
                 .email(officer.getEmail())
                 .password(passwordEncoder.encode("Password@2906"))
                 .user_signature(officer.getFullName())
@@ -59,11 +59,6 @@ public class OfficerRegistrationService {
 
         // Save both using cascade
         return repository.save(officer);
-    }
-
-    private String generateUsername(OfficerRegistration officer) {
-        // Generate username from email prefix or custom logic
-        return officer.getEmail().split("@")[0];
     }
 
     public List<OfficerRegistration> getAll() {

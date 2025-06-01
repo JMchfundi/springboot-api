@@ -122,22 +122,23 @@ public class ClientInfoController {
             Path filePath = Paths.get(System.getProperty("user.dir"), uploadDir, folder).resolve(fileName).normalize();
             // Path filePath = Paths.get("uploads", folder).resolve(fileName).normalize();
             File file = filePath.toFile();
-    
+
             if (!file.exists()) {
                 return ResponseEntity.notFound().build();
             }
-    
+
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             String contentType = Files.probeContentType(filePath);
-    
+
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
+                    .contentType(
+                            MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
                     .body(resource);
-    
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Could not serve file: " + e.getMessage());
         }
     }
-    
+
 }
