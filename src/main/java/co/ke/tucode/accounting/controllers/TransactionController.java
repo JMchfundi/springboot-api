@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import co.ke.tucode.accounting.entities.JournalEntry;
 import co.ke.tucode.accounting.entities.Transaction;
-import co.ke.tucode.accounting.payloads.ReceiptPayload; // Import ReceiptPayload
+import co.ke.tucode.accounting.payloads.ReceiptPayload;
 import co.ke.tucode.accounting.services.TransactionService;
 
 @RestController
@@ -44,8 +44,15 @@ public class TransactionController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/receipt") // Endpoint to save receipt using the payload
+    // ✅ Endpoint for single receipt
+    @PostMapping("/receipt")
     public ResponseEntity<JournalEntry> saveReceipt(@RequestBody ReceiptPayload receiptPayload) {
         return ResponseEntity.ok(transactionService.saveReceipt(receiptPayload));
+    }
+
+    // ✅ Endpoint for batch receipts
+    @PostMapping("/receipt/batch")
+    public ResponseEntity<List<JournalEntry>> saveBatchReceipt(@RequestBody List<ReceiptPayload> receiptPayloads) {
+        return ResponseEntity.ok(transactionService.saveBatchReceipt(receiptPayloads));
     }
 }
