@@ -61,8 +61,8 @@ public class LoanController {
     }
 
     @PostMapping("/disburse/{loanId}")
-    public ResponseEntity<LoanPayload> disburseLoan(@PathVariable Long loanId) {
-    return ResponseEntity.ok(loanService.disburseLoan(loanId));
+    public ResponseEntity<LoanPayload> disburseLoan(@PathVariable Long loanId, @RequestParam Long disburserId) {
+    return ResponseEntity.ok(loanService.disburseLoan(loanId, disburserId));
 }
 
 }

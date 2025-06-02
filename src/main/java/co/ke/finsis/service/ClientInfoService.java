@@ -6,13 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.ClientInfo;
+import co.ke.finsis.entity.LoanType;
 import co.ke.finsis.repository.ClientInfoRepository;
 import co.ke.tucode.accounting.entities.Account;
 import co.ke.tucode.accounting.entities.AccountType;
+import co.ke.tucode.accounting.repositories.AccountRepository;
 import co.ke.tucode.accounting.services.AccountService;
 import jakarta.annotation.PostConstruct;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +30,9 @@ public class ClientInfoService {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -113,5 +119,22 @@ public class ClientInfoService {
         }
 
         return uniqueFileName;
+    }
+
+        public Long getOrCreateClientCurrentAccount(ClientInfo client) {
+        String accountCode = "CURRENT-" + client.getIdNumber() + "-" + client.getId();
+
+        return accountRepository.findByCode(accountCode)
+                .map(Account::getId)
+                .orElseGet(() -> {
+                    Account account = Account.builder()
+                            .name(client.getFullName() + " - Current Account")
+                            .code(accountCode)
+                            .type(AccountType.ASSET)  // Proper classification for receivables
+                            .balance(BigDecimal.ZERO)
+                            .build();
+
+                    return accountRepository.save(account).getId();
+                });
     }
 }

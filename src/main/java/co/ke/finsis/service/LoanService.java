@@ -57,6 +57,7 @@ public class LoanService {
     private final TransactionService transactionService;
     private final ClientInfoRepository clientInfoRepository;
     private final AccountRepository accountRepository;
+    private final ClientInfoService clientInfoService;
 
     public LoanPayload createLoan(LoanPayload payload) {
         LoanType loanType = loanTypeRepository.findById(payload.getLoanTypeId())
@@ -145,7 +146,7 @@ public class LoanService {
     }
 
     @Transactional
-    public LoanPayload disburseLoan(Long loanId) {
+    public LoanPayload disburseLoan(Long loanId, Long payingAccoutId) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + loanId));
 
@@ -156,17 +157,29 @@ public class LoanService {
         ClientInfo clientInfo = clientInfoRepository.findByIdNumber(loan.getIdNumber())
                 .orElseThrow(() -> new RuntimeException("Client not found with ID Number: " + loan.getIdNumber()));
 
-        Long loanAccountId = getOrCreateClientLoanAccount(clientInfo, loan.getLoanType());
 
-        ReceiptPayload receiptPayload = new ReceiptPayload();
-        receiptPayload.setAmount(BigDecimal.valueOf(loan.getPrincipalAmount()));
-        receiptPayload.setReceivedFrom("Loan Client: " + loan.getIdNumber());
-        receiptPayload.setReferenceNumber("LOAN-" + loan.getId());
-        receiptPayload.setReceiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate());
-        receiptPayload.setAccount(loan.getLoanType().getAccountId());   // CREDIT: Loan type GL account
-        receiptPayload.setPaymentFor(loanAccountId);                    // DEBIT: Client's loan account
+        ReceiptPayload receiptPayloadLoanAccounts = ReceiptPayload.builder()
+        .amount(BigDecimal.valueOf(loan.getPrincipalAmount()))
+        .receivedFrom("Loan Client: " + loan.getIdNumber())
+        .referenceNumber("LOAN-" + loan.getId())
+        .receiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate())
+        .account(payingAccoutId)      // CREDIT: Loan type GL account
+        .paymentFor(getOrCreateClientLoanAccount(clientInfo, loan.getLoanType()))                       // DEBIT: Client's loan account
+        .build();
 
-        transactionService.saveReceipt(receiptPayload);
+        transactionService.saveReceipt(receiptPayloadLoanAccounts);
+
+        ReceiptPayload receiptPayloadBankCurrent = ReceiptPayload.builder()
+        .amount(BigDecimal.valueOf(loan.getPrincipalAmount()))
+        .receivedFrom("Loan Client: " + loan.getIdNumber())
+        .referenceNumber("LOAN-" + loan.getId())
+        .receiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate())
+        .account(loan.getLoanType().getAccountId())      // CREDIT: Loan type GL account
+        .paymentFor(clientInfoService.getOrCreateClientCurrentAccount(clientInfo))                       // DEBIT: Client's loan account
+        .build();
+
+        transactionService.saveReceipt(receiptPayloadBankCurrent);
+
 
         loan.getApprovalRequest().setStatus("DISBURSED");
         loanRepository.save(loan);

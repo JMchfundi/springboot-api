@@ -3,8 +3,10 @@ package co.ke.tucode.accounting.payloads;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class ReceiptPayload {
     // private String receiptNo;
