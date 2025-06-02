@@ -1,3 +1,24 @@
+/**
+ * Account naming convention:
+ *
+ * For savings account:
+ *   Stored directly as clientInfo.accountId (foreign key to Account).
+ *
+ * For loan accounts:
+ *   Not stored in ClientInfo directly. Instead, we use Account.code to link:
+ *
+ *   Format:
+ *     LOAN-<ClientIDNumber>-<LoanTypeId>
+ *
+ *   Example:
+ *     Client ID Number: 12345678
+ *     Loan Type ID: 2
+ *     Account.code = "LOAN-12345678-2"
+ *
+ *   This allows indirect lookup of all loan accounts for a client
+ *   without modifying the Account or ClientInfo entities.
+ */
+
 package co.ke.finsis.service;
 
 import lombok.RequiredArgsConstructor;
