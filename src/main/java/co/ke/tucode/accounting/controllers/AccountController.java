@@ -77,7 +77,6 @@ public class AccountController {
     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws Exception {
         List<AccountStatementEntry> entries = accountService.generateAccountStatement(accountId, startDate, endDate);
-        System.out.println("Entries: " + entries);
         byte[] pdf = accountService.generateLedgerReport(entries);
 
         HttpHeaders headers = new HttpHeaders();

@@ -44,17 +44,15 @@
     </title>
     <columnHeader>
         <band height="35" splitType="Stretch">
-            <staticText>
+            <textField pattern="yyyy-MM-dd">
                 <reportElement x="0" y="0" width="100" height="30"
-                    uuid="f1a2b3c4-d5e6-f789-0123-456789abcdef">
+                    uuid="0a1b2c3d-e4f5-6789-0123-456789abcd">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
                         value="a7a7a7a7-b8b8-c9c9-d0d0-e1e1e1e1e1e1" />
                 </reportElement>
-                <textElement verticalAlignment="Middle">
-                    <font isBold="true" />
-                </textElement>
-                <text><![CDATA[Date]]></text>
-            </staticText>
+                <textElement verticalAlignment="Middle" />
+                <textFieldExpression><![CDATA[$F{date} == null ? "" : new java.text.SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf($F{date}))]]></textFieldExpression>
+            </textField>
             <staticText>
                 <reportElement x="100" y="0" width="200" height="30"
                     uuid="b2c3d4e5-f6a7-8901-2345-67890abcdef">
@@ -110,7 +108,7 @@
                         value="a7a7a7a7-b8b8-c9c9-d0d0-e1e1e1e1e1e1" />
                 </reportElement>
                 <textElement verticalAlignment="Middle" />
-                <textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{date} == null ? "" : new java.text.SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf($F{date}))]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="100" y="0" width="200" height="30"
