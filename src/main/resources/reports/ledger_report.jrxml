@@ -109,6 +109,7 @@
                 </reportElement>
                 <textElement verticalAlignment="Middle" />
                 <textFieldExpression><![CDATA[$F{date} == null ? "" : new java.text.SimpleDateFormat("yyyy-MM-dd").format(java.sql.Date.valueOf($F{date}))]]></textFieldExpression>
+
             </textField>
             <textField>
                 <reportElement x="100" y="0" width="200" height="30"
