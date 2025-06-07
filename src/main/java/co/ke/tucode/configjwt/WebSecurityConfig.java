@@ -96,7 +96,8 @@ public class WebSecurityConfig {
                                 "http://192.168.43.134:3000",
                                 "https://www.housing.tucode.co.ke",
                                 "https://www.capdo.org",
-                                "https://www.boreshamaisha.tucode.co.ke")
+                                "https://www.boreshamaisha.tucode.co.ke",
+                                "https://www.ebooks.tucode.co.ke")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // <-- CRUCIAL
                         .allowedHeaders("*") // <-- Allow all headers including Authorization
                         .allowCredentials(true);
