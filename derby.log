@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Sat Jun 07 08:08:28 EAT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-0197-48ca-50c6-000002b609b0 
+Sat Jun 07 19:27:13 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-0197-4b37-b99c-00000331a100 
 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
 Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
 java.vendor=Debian
@@ -12,9 +12,9 @@ os.version=6.12.25-amd64
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Sat Jun 07 08:24:18 EAT 2025:
-Shutting down instance a816c00e-0197-48ca-50c6-000002b609b0 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
-Sat Jun 07 08:24:18 EAT 2025 Thread[#72,Thread-19,5,main] Cleanup action starting
+Sat Jun 07 19:29:56 EAT 2025:
+Shutting down instance a816c00e-0197-4b37-b99c-00000331a100 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
+Sat Jun 07 19:29:57 EAT 2025 Thread[#72,Thread-19,5,main] Cleanup action starting
 ERROR XBM0I: Directory mydb cannot be removed.
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
@@ -29,7 +29,7 @@ ERROR XBM0I: Directory mydb cannot be removed.
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
 Cleanup action completed
-Sat Jun 07 08:24:18 EAT 2025 Thread[#72,Thread-19,5,main] Cleanup action starting
+Sat Jun 07 19:29:57 EAT 2025 Thread[#72,Thread-19,5,main] Cleanup action starting
 ERROR XBM0I: Directory mydb cannot be removed.
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
@@ -45,8 +45,24 @@ ERROR XBM0I: Directory mydb cannot be removed.
 	at java.base/java.lang.Thread.run(Thread.java:1583)
 Cleanup action completed
 ----------------------------------------------------------------
-Sat Jun 07 08:24:19 EAT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance e26d4047-0197-48ca-50c6-000002b609b0 
+Sat Jun 07 19:29:59 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance 2e31c0ab-0197-4b37-b99c-00000331a100 
+on database directory memory:/home/kali/Downloads/springboot-api/6658ed10-49e6-4a7d-a947-38d7e8350e61 with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
+Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
+java.vendor=Debian
+java.runtime.version=21.0.7+6-Debian-1
+user.dir=/home/kali/Downloads/springboot-api
+os.name=Linux
+os.arch=amd64
+os.version=6.12.25-amd64
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sat Jun 07 19:30:06 EAT 2025:
+Shutting down instance 2e31c0ab-0197-4b37-b99c-00000331a100 on database directory memory:/home/kali/Downloads/springboot-api/6658ed10-49e6-4a7d-a947-38d7e8350e61 with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
+----------------------------------------------------------------
+Sat Jun 07 19:30:12 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance 30af4197-0197-4b37-b99c-00000331a100 
 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
 Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
 java.vendor=Debian
@@ -58,9 +74,9 @@ os.version=6.12.25-amd64
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Sat Jun 07 08:25:43 EAT 2025:
-Shutting down instance e26d4047-0197-48ca-50c6-000002b609b0 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
-Sat Jun 07 08:25:44 EAT 2025 Thread[#107,Thread-34,5,main] Cleanup action starting
+Sat Jun 07 19:44:20 EAT 2025:
+Shutting down instance 30af4197-0197-4b37-b99c-00000331a100 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
+Sat Jun 07 19:44:21 EAT 2025 Thread[#147,Thread-52,5,main] Cleanup action starting
 ERROR XBM0I: Directory mydb cannot be removed.
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
@@ -75,7 +91,7 @@ ERROR XBM0I: Directory mydb cannot be removed.
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
 Cleanup action completed
-Sat Jun 07 08:25:44 EAT 2025 Thread[#107,Thread-34,5,main] Cleanup action starting
+Sat Jun 07 19:44:21 EAT 2025 Thread[#147,Thread-52,5,main] Cleanup action starting
 ERROR XBM0I: Directory mydb cannot be removed.
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
 	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
@@ -91,9 +107,9 @@ ERROR XBM0I: Directory mydb cannot be removed.
 	at java.base/java.lang.Thread.run(Thread.java:1583)
 Cleanup action completed
 ----------------------------------------------------------------
-Sat Jun 07 08:25:45 EAT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance 7ff00080-0197-48ca-50c6-000002b609b0 
-on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
+Sat Jun 07 19:44:28 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance 197302a8-0197-4b37-b99c-00000331a100 
+on database directory memory:/home/kali/Downloads/springboot-api/f2b8dae9-0f53-4910-8996-8015f8595211 with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
 Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
 java.vendor=Debian
 java.runtime.version=21.0.7+6-Debian-1
@@ -104,41 +120,24 @@ os.version=6.12.25-amd64
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Sat Jun 07 08:25:48 EAT 2025:
-Shutting down instance 7ff00080-0197-48ca-50c6-000002b609b0 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
-Sat Jun 07 08:25:48 EAT 2025 Thread[#142,Thread-49,5,main] Cleanup action starting
-ERROR XBM0I: Directory mydb cannot be removed.
-	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
-	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
-	at org.apache.derby.iapi.services.monitor.Monitor.removePersistentService(Monitor.java:663)
-	at org.apache.derby.impl.jdbc.EmbedConnection.removePersistentService(EmbedConnection.java:4014)
-	at org.apache.derby.impl.jdbc.EmbedConnection.<init>(EmbedConnection.java:620)
-	at org.apache.derby.iapi.jdbc.InternalDriver.getNewEmbedConnection(InternalDriver.java:629)
-	at org.apache.derby.iapi.jdbc.InternalDriver$LoginCallable.call(InternalDriver.java:400)
-	at org.apache.derby.iapi.jdbc.InternalDriver$LoginCallable.call(InternalDriver.java:376)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-Cleanup action completed
-Sat Jun 07 08:25:48 EAT 2025 Thread[#142,Thread-49,5,main] Cleanup action starting
-ERROR XBM0I: Directory mydb cannot be removed.
-	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:299)
-	at org.apache.derby.shared.common.error.StandardException.newException(StandardException.java:294)
-	at org.apache.derby.iapi.services.monitor.Monitor.removePersistentService(Monitor.java:663)
-	at org.apache.derby.impl.jdbc.EmbedConnection.removePersistentService(EmbedConnection.java:4014)
-	at org.apache.derby.impl.jdbc.EmbedConnection.<init>(EmbedConnection.java:620)
-	at org.apache.derby.iapi.jdbc.InternalDriver.getNewEmbedConnection(InternalDriver.java:629)
-	at org.apache.derby.iapi.jdbc.InternalDriver$LoginCallable.call(InternalDriver.java:400)
-	at org.apache.derby.iapi.jdbc.InternalDriver$LoginCallable.call(InternalDriver.java:376)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-Cleanup action completed
+Sat Jun 07 19:44:28 EAT 2025:
+Shutting down instance 197302a8-0197-4b37-b99c-00000331a100 on database directory memory:/home/kali/Downloads/springboot-api/f2b8dae9-0f53-4910-8996-8015f8595211 with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
 ----------------------------------------------------------------
-Sat Jun 07 08:25:49 EAT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance 109f00b9-0197-48ca-50c6-000002b609b0 
+Sat Jun 07 19:44:28 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance f13f8394-0197-4b37-b99c-00000331a100 
+on database directory memory:/home/kali/Downloads/springboot-api/f2b8dae9-0f53-4910-8996-8015f8595211 with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
+Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
+java.vendor=Debian
+java.runtime.version=21.0.7+6-Debian-1
+user.dir=/home/kali/Downloads/springboot-api
+os.name=Linux
+os.arch=amd64
+os.version=6.12.25-amd64
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sat Jun 07 19:44:31 EAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance da248395-0197-4b37-b99c-00000331a100 
 on database directory /home/kali/Downloads/springboot-api/mydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
 Loaded from file:/home/kali/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
 java.vendor=Debian
