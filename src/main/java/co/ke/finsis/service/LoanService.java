@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import co.ke.finsis.entity.ClientInfo;
+import co.ke.finsis.entity.Group;
 import co.ke.finsis.entity.Loan;
 import co.ke.finsis.entity.LoanType;
 import co.ke.finsis.payload.LoanPayload;
@@ -63,6 +64,7 @@ public class LoanService {
         LoanType loanType = loanTypeRepository.findById(payload.getLoanTypeId())
                 .orElseThrow(() -> new RuntimeException("LoanType not found with ID: " + payload.getLoanTypeId()));
 
+
         ApprovalRequest approvalRequest = approvalService.createApprovalRequest(
                 "Loan Application: " + payload.getIdNumber(),
                 "Approval for loan application for " + payload.getPrincipalAmount(),
@@ -72,6 +74,14 @@ public class LoanService {
 
         Loan loan = mapToEntity(payload);
         loan.setLoanType(loanType);
+                           // ✅ 1. Fetch and set the group from the transient group ID
+    if (payload.getIdNumber() != null) {
+        ClientInfo clientInfo = clientInfoRepository.findByIdNumber(payload.getIdNumber())
+                .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + payload.getIdNumber()));
+        loan.setClient(clientInfo);
+    } else {
+        throw new IllegalArgumentException("Group ID is required");
+    }
         loan.setApprovalRequest(approvalRequest);
 
         loan = loanRepository.save(loan);
@@ -99,6 +109,7 @@ public class LoanService {
         updated.setId(existing.getId());
         updated.setLoanType(existing.getLoanType());
         updated.setApprovalRequest(existing.getApprovalRequest());
+        updated.setClient(existing.getClient());
         return mapToPayload(loanRepository.save(updated));
     }
 
@@ -113,6 +124,7 @@ public class LoanService {
         updated.setId(existing.getId());
         updated.setLoanType(existing.getLoanType());
         updated.setApprovalRequest(approvalRequest);
+        updated.setClient(existing.getClient());
         return mapToPayload(loanRepository.save(updated));
     }
 
