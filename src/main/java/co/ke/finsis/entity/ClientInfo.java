@@ -53,11 +53,10 @@ public class ClientInfo {
     @Transient
     private Long group;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id", nullable = false)
-    @JsonBackReference
+    // @JsonBackReference
     private Group clientGroup;
-
 
     // Next of Kin
     @NotBlank(message = "Next of Kin Name is required")

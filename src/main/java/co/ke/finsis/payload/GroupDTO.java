@@ -1,5 +1,7 @@
 package co.ke.finsis.payload;
 
+import java.math.BigDecimal;
+
 import lombok.*;
 
 @Data
@@ -18,4 +20,5 @@ public class GroupDTO {
 
     private Long officerId;
 
+    private BigDecimal savingbalance;
 }

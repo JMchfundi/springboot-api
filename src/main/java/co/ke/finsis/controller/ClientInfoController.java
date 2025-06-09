@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.ClientInfo;
+import co.ke.finsis.payload.ClientDto;
 import co.ke.finsis.service.ClientInfoService;
 import co.ke.tucode.systemuser.entities.ProfileUpload;
 
@@ -57,7 +58,7 @@ public class ClientInfoController {
 
     // Get All Clients
     @GetMapping("/all")
-    public List<ClientInfo> getAllClients() {
+    public List<ClientDto> getAllClients() {
         return clientInfoService.getAllClients();
     }
 

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.entity.Group;
 import co.ke.finsis.entity.LoanType;
+import co.ke.finsis.payload.ClientDto;
 import co.ke.finsis.repository.ClientInfoRepository;
 import co.ke.finsis.repository.GroupRepository;
 import co.ke.tucode.accounting.entities.Account;
@@ -54,9 +55,18 @@ public class ClientInfoService {
         }
     }
 
-    public List<ClientInfo> getAllClients() {
-        return clientInfoRepository.findAll();
-    }
+public List<ClientDto> getAllClients() {
+    return clientInfoRepository.findAll().stream()
+        .map(client -> new ClientDto(
+                client.getId(),
+                client.getFullName(),
+                client.getEmail(),
+                client.getPhoneNumber(),
+                client.getIdNumber(),
+                client.getClientGroup() != null ? client.getClientGroup().getGroupName() : null
+        ))
+        .toList();
+}
 
     public Optional<ClientInfo> getClientById(Long id) {
         return clientInfoRepository.findById(id);

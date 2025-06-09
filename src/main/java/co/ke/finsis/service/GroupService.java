@@ -1,16 +1,21 @@
 package co.ke.finsis.service;
 
+import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.entity.Group;
 import co.ke.finsis.entity.OfficerRegistration;
 import co.ke.finsis.payload.GroupDTO;
 import co.ke.finsis.repository.GroupRepository;
 import co.ke.finsis.repository.OfficerRegistrationRepository;
+import co.ke.tucode.accounting.entities.Account;
+import co.ke.tucode.accounting.repositories.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,6 +25,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final OfficerRegistrationRepository officerRepo;
+    private final AccountRepository accountRepository;
 
     public GroupDTO createGroup(GroupDTO dto) {
         Group group = mapToEntity(dto);
@@ -75,6 +81,7 @@ public class GroupService {
                 .nearestLandmark(group.getNearestLandmark())
                 .officeType(group.getOfficeType())
                 .officerId(group.getOfficer() != null ? group.getOfficer().getId() : null)
+                .savingbalance(calculateGroupSavingsBalance(group))
                 .build();
     }
 
@@ -139,4 +146,24 @@ public class GroupService {
         }
         return updatedGroups;
     }
+
+    public BigDecimal calculateGroupSavingsBalance(Group group) {
+    List<ClientInfo> clients = group.getClients();
+    List<Long> accountIds = clients.stream()
+                                   .map(ClientInfo::getAccountId)
+                                   .filter(Objects::nonNull)
+                                   .toList();
+
+    if (accountIds.isEmpty()) {
+        return BigDecimal.ZERO;
+    }
+
+    List<Account> accounts = accountRepository.findAllById(accountIds);
+
+    return accounts.stream()
+                   .map(Account::getBalance)
+                   .filter(Objects::nonNull)
+                   .reduce(BigDecimal.ZERO, BigDecimal::add);
+}
+
 }

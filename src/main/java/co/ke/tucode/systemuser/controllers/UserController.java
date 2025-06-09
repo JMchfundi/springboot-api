@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import co.ke.tucode.configjwt.TokenProviderTuCode;
 import co.ke.tucode.systemuser.entities.Africana_User;
 import co.ke.tucode.systemuser.entities.Role;
+import co.ke.tucode.systemuser.payloads.AfricanaUserDto;
 import co.ke.tucode.systemuser.payloads.LoginRequest;
 import co.ke.tucode.systemuser.repositories.CitizenCategoryRepository;
 import co.ke.tucode.systemuser.repositories.Employment_DetailsRepository;
@@ -80,7 +81,7 @@ public class UserController {
     // @CrossOrigin(origins = {"https://www.boreshamaisha.tucode.co.ke", "http://localhost:3000"}, allowedHeaders = "X-Requested-With, Content-Type, Authorization,Origin, Accept, Access-Control-Request-Method", methods = RequestMethod.GET)
     @RequestMapping(value = "/get_service", method = RequestMethod.GET)
     public ResponseEntity<?> get_service() {
-        List<Africana_User> certificates = service.findAll();
+        List<AfricanaUserDto> certificates = service.findAll();
 
         if (certificates.isEmpty())
             return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -94,7 +95,7 @@ public class UserController {
      */
     @GetMapping("/get_user_data/{user}")
     public ResponseEntity<?> get_email(@PathVariable String email) {
-        List<Africana_User> users = service.findByEmail(email);
+        List<AfricanaUserDto> users = service.findByEmail(email);
         if (users.isEmpty())
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         return new ResponseEntity(users.get(0), HttpStatus.OK);
@@ -103,7 +104,7 @@ public class UserController {
 
     @RequestMapping(value = "/get_user", method = RequestMethod.GET)
     public ResponseEntity<?> get_user(@RequestParam(name = "email") String email) {
-        List<Africana_User> users = service.findByEmail(email);
+        List<AfricanaUserDto> users = service.findByEmail(email);
 
         if (users.isEmpty())
             return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -201,7 +202,7 @@ public class UserController {
      */
     @RequestMapping(value = "/delete_service/{email}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable("email") String email) {
-        List<Africana_User> certificate = service.findByEmail(email);
+        List<AfricanaUserDto> certificate = service.findByEmail(email);
 
         if (certificate.isEmpty())
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -226,7 +227,7 @@ public class UserController {
 public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
     String email = userDetails.getUsername(); // Extract email from token
 
-    List<Africana_User> users = service.findByEmail(email);
+    List<AfricanaUserDto> users = service.findByEmail(email);
 
     if (users == null || users.isEmpty()) {
         return ResponseEntity

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.OfficerRegistration;
+import co.ke.finsis.payload.OfficerDto;
 import co.ke.finsis.payload.OfficerRegistrationRequest;
 import co.ke.finsis.repository.OfficerRegistrationRepository;
 import co.ke.mail.services.MailService;
@@ -61,9 +62,31 @@ public class OfficerRegistrationService {
         return repository.save(officer);
     }
 
-    public List<OfficerRegistration> getAll() {
-        return repository.findAll();
-    }
+public List<OfficerDto> getAll() {
+    return repository.findAll().stream()
+        .map(officer -> OfficerDto.builder()
+            .id(officer.getId())
+            .fullName(officer.getFullName())
+            .email(officer.getEmail())
+            .phoneNumber(officer.getPhoneNumber())
+            .idNumber(officer.getIdNumber())
+            .dob(officer.getDob())
+            .gender(officer.getGender())
+            .branchLocation(officer.getBranchLocation())
+            .nokName(officer.getNokName())
+            .nokPhone(officer.getNokPhone())
+            .nokRelationship(officer.getNokRelationship())
+            .bankDetails(officer.getBankDetails())
+            .idDocumentPath(officer.getIdDocumentPath())
+            .passportPhotoPath(officer.getPassportPhotoPath())
+            .systemUsername(officer.getSystemUser() != null ? officer.getSystemUser().getUsername() : null)
+            .systemRole(officer.getSystemUser() != null && officer.getSystemUser().getRole() != null
+                        ? officer.getSystemUser().getRole().name()
+                        : null)
+            .build()
+        )
+        .toList();
+}
 
     public OfficerRegistration getById(Long id) {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Officer not found with ID: " + id));

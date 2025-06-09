@@ -53,9 +53,9 @@ public class Loan {
     private ApprovalRequest approvalRequest;
 
     // In Loan
-@ManyToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "client_id", nullable = false)
-@JsonBackReference
-private ClientInfo client;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
+    @JsonBackReference
+    private ClientInfo client;
 
 }

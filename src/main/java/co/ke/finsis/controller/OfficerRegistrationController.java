@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.OfficerRegistration;
+import co.ke.finsis.payload.OfficerDto;
 import co.ke.finsis.payload.OfficerRegistrationRequest;
 import co.ke.finsis.service.OfficerRegistrationService;
 import co.ke.mail.services.MailService;
@@ -42,7 +43,7 @@ public class OfficerRegistrationController {
 
     // READ ALL
     @GetMapping
-    public ResponseEntity<List<OfficerRegistration>> getAll() {
+    public ResponseEntity<List<OfficerDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 

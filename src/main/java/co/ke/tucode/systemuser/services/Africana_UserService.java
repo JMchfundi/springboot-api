@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import co.ke.tucode.systemuser.entities.Africana_User;
+import co.ke.tucode.systemuser.payloads.AfricanaUserDto;
 import co.ke.tucode.systemuser.repositories.Africana_UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -35,9 +36,18 @@ public class Africana_UserService implements UserDetailsService {
         repository.save(certificate);
     }
 
-    public List<Africana_User> findAll() {
-        return repository.findAll();
-    }
+public List<AfricanaUserDto> findAll() {
+    return repository.findAll().stream()
+     .map(user -> new AfricanaUserDto(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getAccess(),
+            user.getRole() != null ? user.getRole().name() : null,
+            user.getOfficer() != null ? user.getOfficer().getFullName() : null
+        ))
+        .toList();
+}
 
     public void update(Africana_User certificate) {
         repository.save(certificate);
@@ -51,9 +61,18 @@ public class Africana_UserService implements UserDetailsService {
         repository.deleteAll();
     }
 
-    public List<Africana_User> findByEmail(String email) {
-        return repository.findByEmail(email);
-    }
+public List<AfricanaUserDto> findByEmail(String email) {
+    return repository.findByEmail(email).stream()
+        .map(user -> new AfricanaUserDto(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getAccess(),
+            user.getRole() != null ? user.getRole().name() : null,
+            user.getOfficer() != null ? user.getOfficer().getFullName() : null
+        ))
+        .toList();
+}
 
     public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
