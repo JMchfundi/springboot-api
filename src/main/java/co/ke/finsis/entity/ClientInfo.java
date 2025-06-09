@@ -50,10 +50,14 @@ public class ClientInfo {
     @NotBlank(message = "Ward is required")
     private String ward;
 
+    @Transient
+    private Long group;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     @JsonBackReference
-    private Group group;
+    private Group clientGroup;
+
 
     // Next of Kin
     @NotBlank(message = "Next of Kin Name is required")

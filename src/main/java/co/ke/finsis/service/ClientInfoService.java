@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.ke.finsis.entity.ClientInfo;
+import co.ke.finsis.entity.Group;
 import co.ke.finsis.entity.LoanType;
 import co.ke.finsis.repository.ClientInfoRepository;
+import co.ke.finsis.repository.GroupRepository;
 import co.ke.tucode.accounting.entities.Account;
 import co.ke.tucode.accounting.entities.AccountType;
 import co.ke.tucode.accounting.repositories.AccountRepository;
@@ -33,6 +35,9 @@ public class ClientInfoService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private GroupRepository groupRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -75,6 +80,15 @@ public class ClientInfoService {
 
     public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
             throws IOException {
+
+           // ✅ 1. Fetch and set the group from the transient group ID
+    if (clientInfo.getGroup() != null) {
+        Group group = groupRepository.findById(clientInfo.getGroup())
+                .orElseThrow(() -> new IllegalArgumentException("Group not found with ID: " + clientInfo.getGroup()));
+        clientInfo.setClientGroup(group);
+    } else {
+        throw new IllegalArgumentException("Group ID is required");
+    }
 
         if (idDocument != null && !idDocument.isEmpty()) {
             String idDocumentPath = saveFileToServer(idDocument, "id_documents");

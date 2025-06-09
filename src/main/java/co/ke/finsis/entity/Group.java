@@ -31,7 +31,7 @@ public class Group {
     // Placeholder for officer; replace with @ManyToOne when ready
     private String officeType;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clientGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ClientInfo> clients = new ArrayList<>();
 
