@@ -35,6 +35,6 @@ build/
 # External DB
 derby.log
 mydb
-data*
+data
 *.log
 uploads
