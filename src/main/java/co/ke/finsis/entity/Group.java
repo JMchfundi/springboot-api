@@ -1,5 +1,11 @@
 package co.ke.finsis.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,4 +30,14 @@ public class Group {
 
     // Placeholder for officer; replace with @ManyToOne when ready
     private String officeType;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ClientInfo> clients = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "officer_id", nullable = false)
+    @JsonBackReference
+    private OfficerRegistration officer;
+
 }

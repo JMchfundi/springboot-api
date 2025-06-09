@@ -4,7 +4,13 @@ import lombok.Data;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -44,9 +50,10 @@ public class ClientInfo {
     @NotBlank(message = "Ward is required")
     private String ward;
 
-    @Column(name = "groupName")
-    @NotBlank(message = "Group is required")
-    private String group;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    @JsonBackReference
+    private Group group;
 
     // Next of Kin
     @NotBlank(message = "Next of Kin Name is required")
@@ -78,4 +85,10 @@ public class ClientInfo {
 
     @Transient
     private MultipartFile passportPhoto;
+
+    // In ClientInfo
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Loan> loans = new ArrayList<>();
+
 }

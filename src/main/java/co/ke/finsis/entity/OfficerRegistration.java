@@ -2,6 +2,10 @@ package co.ke.finsis.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import co.ke.tucode.systemuser.entities.Africana_User;
@@ -41,4 +45,8 @@ public class OfficerRegistration {
     @OneToOne(mappedBy = "officer", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Africana_User systemUser;
+
+    @OneToMany(mappedBy = "officer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Group> groups = new ArrayList<>();
 }

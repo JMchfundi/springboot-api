@@ -1,8 +1,10 @@
 package co.ke.finsis.service;
 
 import co.ke.finsis.entity.Group;
+import co.ke.finsis.entity.OfficerRegistration;
 import co.ke.finsis.payload.GroupDTO;
 import co.ke.finsis.repository.GroupRepository;
+import co.ke.finsis.repository.OfficerRegistrationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class GroupService {
 
     private final GroupRepository groupRepository;
+    private final OfficerRegistrationRepository officerRepo;
 
     public GroupDTO createGroup(GroupDTO dto) {
         Group group = mapToEntity(dto);
@@ -48,6 +51,12 @@ public class GroupService {
         group.setNearestLandmark(dto.getNearestLandmark());
         group.setOfficeType(dto.getOfficeType());
 
+        if (dto.getOfficerId() != null) {
+            OfficerRegistration officer = officerRepo.findById(dto.getOfficerId())
+                    .orElseThrow(() -> new EntityNotFoundException("Officer not found"));
+            group.setOfficer(officer);
+        }
+
         return mapToDTO(groupRepository.save(group));
     }
 
@@ -65,11 +74,12 @@ public class GroupService {
                 .village(group.getVillage())
                 .nearestLandmark(group.getNearestLandmark())
                 .officeType(group.getOfficeType())
+                .officerId(group.getOfficer() != null ? group.getOfficer().getId() : null)
                 .build();
     }
 
     private Group mapToEntity(GroupDTO dto) {
-        return Group.builder()
+        Group group = Group.builder()
                 .groupName(dto.getGroupName())
                 .county(dto.getCounty())
                 .subCounty(dto.getSubCounty())
@@ -78,6 +88,14 @@ public class GroupService {
                 .nearestLandmark(dto.getNearestLandmark())
                 .officeType(dto.getOfficeType())
                 .build();
+
+        if (dto.getOfficerId() != null) {
+            OfficerRegistration officer = officerRepo.findById(dto.getOfficerId())
+                    .orElseThrow(() -> new EntityNotFoundException("Officer not found"));
+            group.setOfficer(officer);
+        }
+
+        return group;
     }
 
     public Optional<GroupDTO> getGroupByName(String groupName) {
@@ -94,6 +112,13 @@ public class GroupService {
                     group.setVillage(dto.getVillage());
                     group.setNearestLandmark(dto.getNearestLandmark());
                     group.setOfficeType(dto.getOfficeType());
+
+                    if (dto.getOfficerId() != null) {
+                        OfficerRegistration officer = officerRepo.findById(dto.getOfficerId())
+                                .orElseThrow(() -> new EntityNotFoundException("Officer not found"));
+                        group.setOfficer(officer);
+                    }
+
                     return mapToDTO(groupRepository.save(group));
                 });
     }
@@ -114,5 +139,4 @@ public class GroupService {
         }
         return updatedGroups;
     }
-
 }

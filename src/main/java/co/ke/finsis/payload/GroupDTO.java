@@ -15,4 +15,7 @@ public class GroupDTO {
     private String village;
     private String nearestLandmark;
     private String officeType;
+
+    private Long officerId;
+
 }

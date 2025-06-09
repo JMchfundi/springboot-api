@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import co.ke.tucode.approval.entities.ApprovalRequest;
 
 @Entity
@@ -48,4 +51,11 @@ public class Loan {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "approval_request_id")
     private ApprovalRequest approvalRequest;
+
+    // In Loan
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "client_id", nullable = false)
+@JsonBackReference
+private ClientInfo client;
+
 }
