@@ -55,18 +55,17 @@ public class ClientInfoService {
         }
     }
 
-public List<ClientDto> getAllClients() {
-    return clientInfoRepository.findAll().stream()
-        .map(client -> new ClientDto(
-                client.getId(),
-                client.getFullName(),
-                client.getEmail(),
-                client.getPhoneNumber(),
-                client.getIdNumber(),
-                client.getClientGroup() != null ? client.getClientGroup().getGroupName() : null
-        ))
-        .toList();
-}
+    public List<ClientDto> getAllClients() {
+        return clientInfoRepository.findAll().stream()
+                .map(client -> new ClientDto(
+                        client.getId(),
+                        client.getFullName(),
+                        client.getEmail(),
+                        client.getPhoneNumber(),
+                        client.getIdNumber(),
+                        client.getClientGroup() != null ? client.getClientGroup().getGroupName() : null))
+                .toList();
+    }
 
     public Optional<ClientInfo> getClientById(Long id) {
         return clientInfoRepository.findById(id);
@@ -91,14 +90,15 @@ public List<ClientDto> getAllClients() {
     public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
             throws IOException {
 
-           // ✅ 1. Fetch and set the group from the transient group ID
-    if (clientInfo.getGroup() != null) {
-        Group group = groupRepository.findById(clientInfo.getGroup())
-                .orElseThrow(() -> new IllegalArgumentException("Group not found with ID: " + clientInfo.getGroup()));
-        clientInfo.setClientGroup(group);
-    } else {
-        throw new IllegalArgumentException("Group ID is required");
-    }
+        // ✅ 1. Fetch and set the group from the transient group ID
+        if (clientInfo.getGroup() != null) {
+            Group group = groupRepository.findById(clientInfo.getGroup())
+                    .orElseThrow(
+                            () -> new IllegalArgumentException("Group not found with ID: " + clientInfo.getGroup()));
+            clientInfo.setClientGroup(group);
+        } else {
+            throw new IllegalArgumentException("Group ID is required");
+        }
 
         if (idDocument != null && !idDocument.isEmpty()) {
             String idDocumentPath = saveFileToServer(idDocument, "id_documents");
@@ -145,7 +145,7 @@ public List<ClientDto> getAllClients() {
         return uniqueFileName;
     }
 
-        public Long getOrCreateClientCurrentAccount(ClientInfo client) {
+    public Long getOrCreateClientCurrentAccount(ClientInfo client) {
         String accountCode = "CURRENT-" + client.getIdNumber() + "-" + client.getId();
 
         return accountRepository.findByCode(accountCode)
@@ -154,7 +154,7 @@ public List<ClientDto> getAllClients() {
                     Account account = Account.builder()
                             .name(client.getFullName() + " - Current Account")
                             .code(accountCode)
-                            .type(AccountType.ASSET)  // Proper classification for receivables
+                            .type(AccountType.ASSET) // Proper classification for receivables
                             .balance(BigDecimal.ZERO)
                             .build();
 

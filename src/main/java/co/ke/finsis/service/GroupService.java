@@ -94,6 +94,7 @@ public class GroupService {
                 .village(dto.getVillage())
                 .nearestLandmark(dto.getNearestLandmark())
                 .officeType(dto.getOfficeType())
+                .clients(new ArrayList<>())
                 .build();
 
         if (dto.getOfficerId() != null) {

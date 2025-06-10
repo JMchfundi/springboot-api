@@ -1,6 +1,6 @@
 package co.ke.finsis.entity;
 
-import lombok.Data;
+import lombok.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +55,7 @@ public class ClientInfo {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id", nullable = false)
-    // @JsonBackReference
+    @JsonBackReference
     private Group clientGroup;
 
     // Next of Kin
