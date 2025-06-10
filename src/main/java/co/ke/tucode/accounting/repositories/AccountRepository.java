@@ -16,6 +16,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT a FROM Account a WHERE a.type = :type ORDER BY a.code DESC")
     List<Account> findTopByTypeOrderByCodeDesc(@Param("type") AccountType type);
 
-    // ✅ Add this for code-based lookups
-    Optional<Account> findByCode(String code);
+    Optional<Account> findByName(String name);
 }

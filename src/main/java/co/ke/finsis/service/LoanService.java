@@ -36,6 +36,7 @@ import co.ke.tucode.accounting.entities.Account;
 import co.ke.tucode.accounting.entities.AccountType;
 import co.ke.tucode.accounting.payloads.ReceiptPayload;
 import co.ke.tucode.accounting.repositories.AccountRepository;
+import co.ke.tucode.accounting.services.AccountService;
 import co.ke.tucode.accounting.services.TransactionService;
 import co.ke.tucode.approval.entities.ApprovalRequest;
 import co.ke.tucode.approval.entities.ApprovalStep;
@@ -59,6 +60,7 @@ public class LoanService {
     private final ClientInfoRepository clientInfoRepository;
     private final AccountRepository accountRepository;
     private final ClientInfoService clientInfoService;
+    private final AccountService accountService;
 
     public LoanPayload createLoan(LoanPayload payload) {
         LoanType loanType = loanTypeRepository.findById(payload.getLoanTypeId())
@@ -200,26 +202,25 @@ public class LoanService {
     }
 
     private Long getOrCreateClientLoanAccount(ClientInfo client, LoanType loanType) {
-    String accountCode = "LOAN-" + client.getIdNumber() + "-" + loanType.getId();
+    String accountName = client.getFullName() + " (" + loanType.getName() + ")";
 
-    return accountRepository.findByCode(accountCode)
+    return accountRepository.findByName(accountName)
             .map(account -> {
                 if (!client.getAccounts().contains(account)) {
                     client.getAccounts().add(account);
-                    clientInfoRepository.save(client); // Save the client
+                    clientInfoRepository.save(client);
                 }
                 return account.getId();
             })
             .orElseGet(() -> {
                 Account account = Account.builder()
-                        .name("Loan Account - " + client.getFullName() + " (" + loanType.getName() + ")")
-                        .code(accountCode)
-                        .type(AccountType.ASSET)  // Proper classification for receivables
+                        .name(accountName)
+                        .type(AccountType.ASSET) 
                         .balance(BigDecimal.ZERO)
                         .build();
-                Account savedAccount = accountRepository.save(account);
+                Account savedAccount = accountService.createAccount(account);
                 client.getAccounts().add(savedAccount);
-                clientInfoRepository.save(client); // Save the client
+                clientInfoRepository.save(client);
                 return savedAccount.getId();
             });
 }

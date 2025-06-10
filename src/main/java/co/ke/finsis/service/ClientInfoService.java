@@ -147,10 +147,10 @@ public class ClientInfoService {
         return uniqueFileName;
     }
 
-public Long getOrCreateClientCurrentAccount(ClientInfo client) {
-    String accountCode = "CURRENT-" + client.getIdNumber() + "-" + client.getId();
+    public Long getOrCreateClientCurrentAccount(ClientInfo client) {
+    String accountName = client.getFullName() + " - Current Account";
 
-    return accountRepository.findByCode(accountCode)
+    return accountRepository.findByName(accountName)
             .map(account -> {
                 if (!client.getAccounts().contains(account)) {
                     client.getAccounts().add(account);
@@ -160,12 +160,11 @@ public Long getOrCreateClientCurrentAccount(ClientInfo client) {
             })
             .orElseGet(() -> {
                 Account account = Account.builder()
-                        .name(client.getFullName() + " - Current Account")
-                        .code(accountCode)
-                        .type(AccountType.ASSET) 
+                        .name(accountName)
+                        .type(AccountType.LIABILITY) 
                         .balance(BigDecimal.ZERO)
                         .build();
-                Account savedAccount = accountRepository.save(account);
+                Account savedAccount = accountService.createAccount(account);
                 client.getAccounts().add(savedAccount);
                 clientInfoRepository.save(client);
                 return savedAccount.getId();
