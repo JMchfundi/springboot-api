@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import co.ke.tucode.accounting.entities.Account;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,9 +80,13 @@ public class ClientInfo {
     private String idDocumentPath;
     private String passportPhotoPath;
 
-    // Link to account (savings)
-    @Column(name = "account_id")
-    private Long accountId;
+    @ManyToMany
+    @JoinTable(
+        name = "client_accounts",
+        joinColumns = @JoinColumn(name = "client_id"),
+        inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+    private List<Account> accounts = new ArrayList<>();
 
     // Transient fields (not persisted)
     @Transient

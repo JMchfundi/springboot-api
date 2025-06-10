@@ -85,7 +85,7 @@ public class GroupService {
                 .totalClients(group.getClients() != null ? group.getClients().size() : 0)
                 .build();
     }
-    
+
     private Group mapToEntity(GroupDTO dto) {
         Group group = Group.builder()
                 .groupName(dto.getGroupName())
@@ -150,22 +150,21 @@ public class GroupService {
     }
 
     public BigDecimal calculateGroupSavingsBalance(Group group) {
-    List<ClientInfo> clients = group.getClients();
-    List<Long> accountIds = clients.stream()
-                                   .map(ClientInfo::getAccountId)
-                                   .filter(Objects::nonNull)
-                                   .toList();
+        List<ClientInfo> clients = group.getClients();
+        List<Long> accountIds = clients.stream()
+                .flatMap(client -> client.getAccounts().stream())
+                .map(Account::getId)
+                .toList();
 
-    if (accountIds.isEmpty()) {
-        return BigDecimal.ZERO;
+        if (accountIds.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        List<Account> accounts = accountRepository.findAllById(accountIds);
+
+        return accounts.stream()
+                .map(Account::getBalance)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
-    List<Account> accounts = accountRepository.findAllById(accountIds);
-
-    return accounts.stream()
-                   .map(Account::getBalance)
-                   .filter(Objects::nonNull)
-                   .reduce(BigDecimal.ZERO, BigDecimal::add);
-}
-
 }

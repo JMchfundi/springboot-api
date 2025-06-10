@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,43 +89,44 @@ public class ClientInfoService {
     }
 
     public ClientInfo saveClientInfo(ClientInfo clientInfo, MultipartFile idDocument, MultipartFile passportPhoto)
-            throws IOException {
+        throws IOException {
 
-        // ✅ 1. Fetch and set the group from the transient group ID
-        if (clientInfo.getGroup() != null) {
-            Group group = groupRepository.findById(clientInfo.getGroup())
-                    .orElseThrow(
-                            () -> new IllegalArgumentException("Group not found with ID: " + clientInfo.getGroup()));
-            clientInfo.setClientGroup(group);
-        } else {
-            throw new IllegalArgumentException("Group ID is required");
-        }
-
-        if (idDocument != null && !idDocument.isEmpty()) {
-            String idDocumentPath = saveFileToServer(idDocument, "id_documents");
-            clientInfo.setIdDocumentPath("api/clients/files/id_documents/" + idDocumentPath);
-        }
-
-        if (passportPhoto != null && !passportPhoto.isEmpty()) {
-            String passportPhotoPath = saveFileToServer(passportPhoto, "passport_photos");
-            clientInfo.setPassportPhotoPath("api/clients/files/passport_photos/" + passportPhotoPath);
-        }
-
-        // Save client (initially without accountId)
-        // ClientInfo savedClient = clientInfoRepository.save(clientInfo);
-
-        // Create savings account
-        Account account = new Account();
-        account.setName(clientInfo.getFullName() + " - Savings Account");
-        account.setType(AccountType.LIABILITY); // Because the organization owes savings to client
-
-        Account savedAccount = accountService.createAccount(account);
-
-        // Set accountId and update client
-        clientInfo.setAccountId(savedAccount.getId());
-        return clientInfoRepository.save(clientInfo);
+    // ✅ 1. Fetch and set the group from the transient group ID
+    if (clientInfo.getGroup() != null) {
+        Group group = groupRepository.findById(clientInfo.getGroup())
+                .orElseThrow(
+                        () -> new IllegalArgumentException("Group not found with ID: " + clientInfo.getGroup()));
+        clientInfo.setClientGroup(group);
+    } else {
+        throw new IllegalArgumentException("Group ID is required");
     }
 
+    if (idDocument != null && !idDocument.isEmpty()) {
+        String idDocumentPath = saveFileToServer(idDocument, "id_documents");
+        clientInfo.setIdDocumentPath("api/clients/files/id_documents/" + idDocumentPath);
+    }
+
+    if (passportPhoto != null && !passportPhoto.isEmpty()) {
+        String passportPhotoPath = saveFileToServer(passportPhoto, "passport_photos");
+        clientInfo.setPassportPhotoPath("api/clients/files/passport_photos/" + passportPhotoPath);
+    }
+
+    // Initialize accounts list if null
+    if (clientInfo.getAccounts() == null) {
+        clientInfo.setAccounts(new ArrayList<>());
+    }
+
+    // Create savings account
+    Account account = new Account();
+    account.setName(clientInfo.getFullName() + " - Savings Account");
+    account.setType(AccountType.LIABILITY); // Because the organization owes savings to client
+
+    Account savedAccount = accountService.createAccount(account);
+
+    // Add account to client's accounts
+    clientInfo.getAccounts().add(savedAccount);
+    return clientInfoRepository.save(clientInfo);
+}
     private String saveFileToServer(MultipartFile file, String subDir) throws IOException {
         Path basePath = Paths.get(System.getProperty("user.dir"), uploadDir);
         Path directoryPath = basePath.resolve(subDir);
@@ -145,20 +147,28 @@ public class ClientInfoService {
         return uniqueFileName;
     }
 
-    public Long getOrCreateClientCurrentAccount(ClientInfo client) {
-        String accountCode = "CURRENT-" + client.getIdNumber() + "-" + client.getId();
+public Long getOrCreateClientCurrentAccount(ClientInfo client) {
+    String accountCode = "CURRENT-" + client.getIdNumber() + "-" + client.getId();
 
-        return accountRepository.findByCode(accountCode)
-                .map(Account::getId)
-                .orElseGet(() -> {
-                    Account account = Account.builder()
-                            .name(client.getFullName() + " - Current Account")
-                            .code(accountCode)
-                            .type(AccountType.ASSET) // Proper classification for receivables
-                            .balance(BigDecimal.ZERO)
-                            .build();
-
-                    return accountRepository.save(account).getId();
-                });
-    }
+    return accountRepository.findByCode(accountCode)
+            .map(account -> {
+                if (!client.getAccounts().contains(account)) {
+                    client.getAccounts().add(account);
+                    clientInfoRepository.save(client);
+                }
+                return account.getId();
+            })
+            .orElseGet(() -> {
+                Account account = Account.builder()
+                        .name(client.getFullName() + " - Current Account")
+                        .code(accountCode)
+                        .type(AccountType.ASSET) 
+                        .balance(BigDecimal.ZERO)
+                        .build();
+                Account savedAccount = accountRepository.save(account);
+                client.getAccounts().add(savedAccount);
+                clientInfoRepository.save(client);
+                return savedAccount.getId();
+            });
+}
 }

@@ -200,22 +200,29 @@ public class LoanService {
     }
 
     private Long getOrCreateClientLoanAccount(ClientInfo client, LoanType loanType) {
-        String accountCode = "LOAN-" + client.getIdNumber() + "-" + loanType.getId();
+    String accountCode = "LOAN-" + client.getIdNumber() + "-" + loanType.getId();
 
-        return accountRepository.findByCode(accountCode)
-                .map(Account::getId)
-                .orElseGet(() -> {
-                    Account account = Account.builder()
-                            .name("Loan Account - " + client.getFullName() + " (" + loanType.getName() + ")")
-                            .code(accountCode)
-                            .type(AccountType.ASSET)  // Proper classification for receivables
-                            .balance(BigDecimal.ZERO)
-                            .build();
-
-                    return accountRepository.save(account).getId();
-                });
-    }
-
+    return accountRepository.findByCode(accountCode)
+            .map(account -> {
+                if (!client.getAccounts().contains(account)) {
+                    client.getAccounts().add(account);
+                    clientInfoRepository.save(client); // Save the client
+                }
+                return account.getId();
+            })
+            .orElseGet(() -> {
+                Account account = Account.builder()
+                        .name("Loan Account - " + client.getFullName() + " (" + loanType.getName() + ")")
+                        .code(accountCode)
+                        .type(AccountType.ASSET)  // Proper classification for receivables
+                        .balance(BigDecimal.ZERO)
+                        .build();
+                Account savedAccount = accountRepository.save(account);
+                client.getAccounts().add(savedAccount);
+                clientInfoRepository.save(client); // Save the client
+                return savedAccount.getId();
+            });
+}
     private Loan mapToEntity(LoanPayload payload) {
         return Loan.builder()
                 .idNumber(payload.getIdNumber())
