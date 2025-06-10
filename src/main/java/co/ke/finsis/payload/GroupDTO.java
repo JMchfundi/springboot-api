@@ -21,4 +21,5 @@ public class GroupDTO {
     private Long officerId;
 
     private BigDecimal savingbalance;
+    private int totalClients;
 }

@@ -82,9 +82,10 @@ public class GroupService {
                 .officeType(group.getOfficeType())
                 .officerId(group.getOfficer() != null ? group.getOfficer().getId() : null)
                 .savingbalance(calculateGroupSavingsBalance(group))
+                .totalClients(group.getClients() != null ? group.getClients().size() : 0)
                 .build();
     }
-
+    
     private Group mapToEntity(GroupDTO dto) {
         Group group = Group.builder()
                 .groupName(dto.getGroupName())
