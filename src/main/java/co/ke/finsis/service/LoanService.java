@@ -202,7 +202,7 @@ public class LoanService {
     }
 
     private Long getOrCreateClientLoanAccount(ClientInfo client, LoanType loanType) {
-    String accountName = client.getFullName() + " (" + loanType.getName() + ")";
+    String accountName = client.getFullName() + " (" + loanType.getName() + ")" +  " - Loan Account";
 
     return accountRepository.findByName(accountName)
             .map(account -> {

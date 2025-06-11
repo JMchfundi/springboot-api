@@ -19,6 +19,7 @@ public class GroupDTO {
     private String officeType;
 
     private Long officerId;
+    private String officerName;
 
     private BigDecimal savingbalance;
     private int totalClients;

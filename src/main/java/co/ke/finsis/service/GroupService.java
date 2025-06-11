@@ -71,20 +71,21 @@ public class GroupService {
     }
 
     private GroupDTO mapToDTO(Group group) {
-        return GroupDTO.builder()
-                .id(group.getId())
-                .groupName(group.getGroupName())
-                .county(group.getCounty())
-                .subCounty(group.getSubCounty())
-                .ward(group.getWard())
-                .village(group.getVillage())
-                .nearestLandmark(group.getNearestLandmark())
-                .officeType(group.getOfficeType())
-                .officerId(group.getOfficer() != null ? group.getOfficer().getId() : null)
-                .savingbalance(calculateGroupSavingsBalance(group))
-                .totalClients(group.getClients() != null ? group.getClients().size() : 0)
-                .build();
-    }
+    return GroupDTO.builder()
+            .id(group.getId())
+            .groupName(group.getGroupName())
+            .county(group.getCounty())
+            .subCounty(group.getSubCounty())
+            .ward(group.getWard())
+            .village(group.getVillage())
+            .nearestLandmark(group.getNearestLandmark())
+            .officeType(group.getOfficeType())
+            .officerId(group.getOfficer() != null ? group.getOfficer().getId() : null)
+            .officerName(group.getOfficer() != null ? group.getOfficer().getFullName() : null) // <-- Add this
+            .savingbalance(calculateGroupSavingsBalance(group))
+            .totalClients(group.getClients() != null ? group.getClients().size() : 0)
+            .build();
+}
 
     private Group mapToEntity(GroupDTO dto) {
         Group group = Group.builder()
