@@ -1,31 +1,9 @@
-/**
- * Account naming convention:
- *
- * For savings account:
- *   Stored directly as clientInfo.accountId (foreign key to Account).
- *
- * For loan accounts:
- *   Not stored in ClientInfo directly. Instead, we use Account.code to link:
- *
- *   Format:
- *     LOAN-<ClientIDNumber>-<LoanTypeId>
- *
- *   Example:
- *     Client ID Number: 12345678
- *     Loan Type ID: 2
- *     Account.code = "LOAN-12345678-2"
- *
- *   This allows indirect lookup of all loan accounts for a client
- *   without modifying the Account or ClientInfo entities.
- */
-
 package co.ke.finsis.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import co.ke.finsis.entity.ClientInfo;
-import co.ke.finsis.entity.Group;
 import co.ke.finsis.entity.Loan;
 import co.ke.finsis.entity.LoanType;
 import co.ke.finsis.payload.LoanPayload;
@@ -66,24 +44,38 @@ public class LoanService {
         LoanType loanType = loanTypeRepository.findById(payload.getLoanTypeId())
                 .orElseThrow(() -> new RuntimeException("LoanType not found with ID: " + payload.getLoanTypeId()));
 
+        // List<Long> approverIds = loanType.getApprovers().stream()
+        //         .map(user -> user.getId())
+        //         .collect(Collectors.toList());
+
+        // ApprovalRequest approvalRequest = approvalService.createApprovalRequest(
+        //         "Loan Application: " + payload.getIdNumber(),
+        //         "Approval for loan application for " + payload.getPrincipalAmount(),
+        //         payload.getRequestedByUserId(),
+        //         approverIds);
+
+        // // 👉 Automatically approve if no approvers
+        // if (approverIds.isEmpty()) {
+        //     approvalRequest.setStatus("APPROVED");
+        // }
 
         ApprovalRequest approvalRequest = approvalService.createApprovalRequest(
                 "Loan Application: " + payload.getIdNumber(),
                 "Approval for loan application for " + payload.getPrincipalAmount(),
                 payload.getRequestedByUserId(),
-                loanType.getApprovers().stream().map(user -> user.getId()).collect(Collectors.toList())
-        );
+                loanType.getApprovers().stream().map(user -> user.getId()).collect(Collectors.toList()));
 
         Loan loan = mapToEntity(payload);
         loan.setLoanType(loanType);
-                           // ✅ 1. Fetch and set the group from the transient group ID
-    if (payload.getIdNumber() != null) {
-        ClientInfo clientInfo = clientInfoRepository.findByIdNumber(payload.getIdNumber())
-                .orElseThrow(() -> new IllegalArgumentException("Client not found with ID: " + payload.getIdNumber()));
-        loan.setClient(clientInfo);
-    } else {
-        throw new IllegalArgumentException("Group ID is required");
-    }
+        // ✅ 1. Fetch and set the group from the transient group ID
+        if (payload.getIdNumber() != null) {
+            ClientInfo clientInfo = clientInfoRepository.findByIdNumber(payload.getIdNumber())
+                    .orElseThrow(
+                            () -> new IllegalArgumentException("Client not found with ID: " + payload.getIdNumber()));
+            loan.setClient(clientInfo);
+        } else {
+            throw new IllegalArgumentException("Group ID is required");
+        }
         loan.setApprovalRequest(approvalRequest);
 
         loan = loanRepository.save(loan);
@@ -138,7 +130,8 @@ public class LoanService {
         return loanRepository.findAll().stream()
                 .filter(loan -> {
                     ApprovalRequest request = loan.getApprovalRequest();
-                    if (request == null || !"PENDING".equalsIgnoreCase(request.getStatus())) return false;
+                    if (request == null || !"PENDING".equalsIgnoreCase(request.getStatus()))
+                        return false;
 
                     return request.getSteps().stream()
                             .filter(step -> "PENDING".equalsIgnoreCase(step.getStatus()))
@@ -171,29 +164,29 @@ public class LoanService {
         ClientInfo clientInfo = clientInfoRepository.findByIdNumber(loan.getIdNumber())
                 .orElseThrow(() -> new RuntimeException("Client not found with ID Number: " + loan.getIdNumber()));
 
-
         ReceiptPayload receiptPayloadLoanAccounts = ReceiptPayload.builder()
-        .amount(BigDecimal.valueOf(loan.getPrincipalAmount()))
-        .receivedFrom("Loan Client: " + loan.getIdNumber())
-        .referenceNumber("LOAN-" + loan.getId())
-        .receiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate())
-        .account(payingAccoutId)      // CREDIT: Loan type GL account
-        .paymentFor(getOrCreateClientLoanAccount(clientInfo, loan.getLoanType()))                       // DEBIT: Client's loan account
-        .build();
+                .amount(BigDecimal.valueOf(loan.getPrincipalAmount()))
+                .receivedFrom("Loan Client: " + loan.getIdNumber())
+                .referenceNumber("LOAN-" + loan.getId())
+                .receiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate())
+                .account(payingAccoutId) // CREDIT: Loan type GL account
+                .paymentFor(getOrCreateClientLoanAccount(clientInfo, loan.getLoanType())) // DEBIT: Client's loan
+                                                                                          // account
+                .build();
 
         transactionService.saveReceipt(receiptPayloadLoanAccounts);
 
         ReceiptPayload receiptPayloadBankCurrent = ReceiptPayload.builder()
-        .amount(BigDecimal.valueOf(loan.getPrincipalAmount()))
-        .receivedFrom("Loan Client: " + loan.getIdNumber())
-        .referenceNumber("LOAN-" + loan.getId())
-        .receiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate())
-        .account(loan.getLoanType().getAccountId())      // CREDIT: Loan type GL account
-        .paymentFor(clientInfoService.getOrCreateClientCurrentAccount(clientInfo))                       // DEBIT: Client's loan account
-        .build();
+                .amount(BigDecimal.valueOf(loan.getPrincipalAmount()))
+                .receivedFrom("Loan Client: " + loan.getIdNumber())
+                .referenceNumber("LOAN-" + loan.getId())
+                .receiptDate(loan.getStartDate() != null ? loan.getStartDate() : loan.getCreationDate())
+                .account(loan.getLoanType().getAccountId()) // CREDIT: Loan type GL account
+                .paymentFor(clientInfoService.getOrCreateClientCurrentAccount(clientInfo)) // DEBIT: Client's loan
+                                                                                           // account
+                .build();
 
         transactionService.saveReceipt(receiptPayloadBankCurrent);
-
 
         loan.getApprovalRequest().setStatus("DISBURSED");
         loanRepository.save(loan);
@@ -202,28 +195,29 @@ public class LoanService {
     }
 
     private Long getOrCreateClientLoanAccount(ClientInfo client, LoanType loanType) {
-    String accountName = client.getFullName() + " (" + loanType.getName() + ")" +  " - Loan Account";
+        String accountName = client.getFullName() + " (" + loanType.getName() + ")" + " - Loan Account";
 
-    return accountRepository.findByName(accountName)
-            .map(account -> {
-                if (!client.getAccounts().contains(account)) {
-                    client.getAccounts().add(account);
+        return accountRepository.findByName(accountName)
+                .map(account -> {
+                    if (!client.getAccounts().contains(account)) {
+                        client.getAccounts().add(account);
+                        clientInfoRepository.save(client);
+                    }
+                    return account.getId();
+                })
+                .orElseGet(() -> {
+                    Account account = Account.builder()
+                            .name(accountName)
+                            .type(AccountType.ASSET)
+                            .balance(BigDecimal.ZERO)
+                            .build();
+                    Account savedAccount = accountService.createAccount(account);
+                    client.getAccounts().add(savedAccount);
                     clientInfoRepository.save(client);
-                }
-                return account.getId();
-            })
-            .orElseGet(() -> {
-                Account account = Account.builder()
-                        .name(accountName)
-                        .type(AccountType.ASSET) 
-                        .balance(BigDecimal.ZERO)
-                        .build();
-                Account savedAccount = accountService.createAccount(account);
-                client.getAccounts().add(savedAccount);
-                clientInfoRepository.save(client);
-                return savedAccount.getId();
-            });
-}
+                    return savedAccount.getId();
+                });
+    }
+
     private Loan mapToEntity(LoanPayload payload) {
         return Loan.builder()
                 .idNumber(payload.getIdNumber())
