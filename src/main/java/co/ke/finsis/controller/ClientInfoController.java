@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import co.ke.finsis.entity.ClientInfo;
 import co.ke.finsis.payload.ClientDto;
 import co.ke.finsis.service.ClientInfoService;
-import co.ke.tucode.systemuser.entities.ProfileUpload;
-
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
 
