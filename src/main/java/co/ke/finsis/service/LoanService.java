@@ -44,26 +44,27 @@ public class LoanService {
         LoanType loanType = loanTypeRepository.findById(payload.getLoanTypeId())
                 .orElseThrow(() -> new RuntimeException("LoanType not found with ID: " + payload.getLoanTypeId()));
 
-        // List<Long> approverIds = loanType.getApprovers().stream()
-        //         .map(user -> user.getId())
-        //         .collect(Collectors.toList());
-
-        // ApprovalRequest approvalRequest = approvalService.createApprovalRequest(
-        //         "Loan Application: " + payload.getIdNumber(),
-        //         "Approval for loan application for " + payload.getPrincipalAmount(),
-        //         payload.getRequestedByUserId(),
-        //         approverIds);
-
-        // // 👉 Automatically approve if no approvers
-        // if (approverIds.isEmpty()) {
-        //     approvalRequest.setStatus("APPROVED");
-        // }
+        List<Long> approverIds = loanType.getApprovers().stream()
+                .map(user -> user.getId())
+                .collect(Collectors.toList());
 
         ApprovalRequest approvalRequest = approvalService.createApprovalRequest(
                 "Loan Application: " + payload.getIdNumber(),
                 "Approval for loan application for " + payload.getPrincipalAmount(),
                 payload.getRequestedByUserId(),
-                loanType.getApprovers().stream().map(user -> user.getId()).collect(Collectors.toList()));
+                approverIds);
+
+        // 👉 Automatically approve if no approvers
+        if (approverIds.isEmpty()) {
+            approvalRequest.setStatus("APPROVED");
+        }
+
+        // ApprovalRequest approvalRequest = approvalService.createApprovalRequest(
+        // "Loan Application: " + payload.getIdNumber(),
+        // "Approval for loan application for " + payload.getPrincipalAmount(),
+        // payload.getRequestedByUserId(),
+        // loanType.getApprovers().stream().map(user ->
+        // user.getId()).collect(Collectors.toList()));
 
         Loan loan = mapToEntity(payload);
         loan.setLoanType(loanType);
